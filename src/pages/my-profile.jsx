@@ -6,6 +6,7 @@ import Feeds from "../components/userFeed";
 // import { Link } from "react-router-dom";
 import Link from "next/link";
 import UserProfile from "../components/userProfile";
+import requiresAuth from "../config/requireAuth";
 
 // ini untuk page sendiri
 // klo ad perubahan profile, setelah oatch, harus update reduxnya
@@ -97,5 +98,11 @@ const MyProfilePage = () => {
     </>
   );
 };
+
+export const getServerSideProps = requiresAuth((context) => {
+  return {
+    props: {},
+  };
+});
 
 export default MyProfilePage;

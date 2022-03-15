@@ -6,6 +6,7 @@ import { Spinner, Center } from "@chakra-ui/react";
 import { axiosInstance } from "../../config/api";
 import Page from "../../components/Page";
 import { useRouter } from "next/router";
+import requiresAuth from "../../config/requireAuth";
 
 const ContentDetail = () => {
   const [data, setData] = useState([]);
@@ -121,5 +122,11 @@ const ContentDetail = () => {
     </Page>
   );
 };
+
+export const getServerSideProps = requiresAuth((context) => {
+  return {
+    props: {},
+  };
+});
 
 export default ContentDetail;

@@ -165,7 +165,11 @@ const ContentCard = ({
             />
             <div>
               <Link href={profileRedirect}>
-                <Text fontWeight={"bold"} fontSize="xl">
+                <Text
+                  className="hover:cursor-pointer"
+                  fontWeight={"bold"}
+                  fontSize="xl"
+                >
                   {username}
                 </Text>
               </Link>

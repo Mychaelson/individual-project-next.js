@@ -2,6 +2,7 @@ import React from "react";
 import RegisterForm from "../components/register";
 import { Box } from "@chakra-ui/react";
 import LoginImg from "../components/loginImage";
+import guestOnly from "../config/guestOnly";
 
 const Register = () => {
   return (
@@ -11,5 +12,11 @@ const Register = () => {
     </Box>
   );
 };
+
+export const getServerSideProps = guestOnly((context) => {
+  return {
+    props: {},
+  };
+});
 
 export default Register;

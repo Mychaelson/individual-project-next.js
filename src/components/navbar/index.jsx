@@ -57,6 +57,8 @@ const Navbar = () => {
     });
 
     Cookies.remove("user_data");
+
+    router.push("/welcome-page");
   };
 
   const inputHandler = (event, field) => {
@@ -97,18 +99,19 @@ const Navbar = () => {
 
   return (
     <Box
+      as="nav"
       sx={{ position: "sticky", top: 0, backgroundColor: "white" }}
       zIndex="9"
       boxShadow="md"
     >
       <Box
-        display="flex"
+        // display="flex"
         justifyContent="space-between"
         alignItems="center"
         px={10}
         py={3}
         fontSize="3xl"
-        className="grid grid-cols-3 gap-4"
+        className="grid grid-cols-3"
       >
         <Box className="col-span-1">
           <Link href="/home-page">

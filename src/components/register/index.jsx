@@ -27,10 +27,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { axiosInstance } from "../../config/api";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const RegisterForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [showPassConfirm, setShowPassConfirm] = useState(false);
+  const router = useRouter();
 
   const showPassword = () => {
     setShowPass(!showPass);
@@ -67,7 +69,7 @@ const RegisterForm = () => {
         console.log(error);
       }
 
-      // navigate("/login");
+      router.push("/login");
     },
     validationSchema: Yup.object().shape({
       // TODO: add regex in the password
@@ -84,8 +86,6 @@ const RegisterForm = () => {
         .max(20, "Username must not exceed 20 characters"),
       password: Yup.string()
         .required("Password is required")
-        .string()
-        .required("Please Enter your password")
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"

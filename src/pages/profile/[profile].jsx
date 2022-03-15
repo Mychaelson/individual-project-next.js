@@ -8,6 +8,7 @@ import { axiosInstance } from "../../config/api";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
+import requiresAuth from "../../config/requireAuth";
 
 const ProfilePage = () => {
   const [data, setData] = useState([]);
@@ -103,5 +104,11 @@ const ProfilePage = () => {
     </>
   );
 };
+
+export const getServerSideProps = requiresAuth((context) => {
+  return {
+    props: {},
+  };
+});
 
 export default ProfilePage;
