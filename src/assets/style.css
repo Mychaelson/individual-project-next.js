@@ -1,0 +1,12 @@
+* {
+  scroll-behavior: smooth;
+}
+
+.click:hover {
+  cursor: pointer;
+}
+
+.changeColor:hover {
+  cursor: pointer;
+  color: blue;
+}

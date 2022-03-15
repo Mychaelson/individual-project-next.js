@@ -1,0 +1,122 @@
+{
+  "contents": [
+    {
+      "id": 1,
+      "userId": 1,
+      "location": "Puncak",
+      "likes": 1,
+      "date": "03-03-2022",
+      "caption": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
+      "likeStatus": true,
+      "imgUrl": "https://images.pexels.com/photos/371589/pexels-photo-371589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "location": "Bandung",
+      "likes": 1,
+      "date": "03-02-2022",
+      "caption": "Dingin coyy",
+      "likeStatus": true,
+      "imgUrl": "https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+    },
+    {
+      "userId": 1,
+      "location": "Bogor",
+      "likes": 1,
+      "date": "3-12-2022",
+      "caption": "healing",
+      "likeStatus": true,
+      "imgUrl": "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+      "id": 3
+    }
+  ],
+  "comments": [
+    {
+      "userId": 2,
+      "content": "woww",
+      "postId": 1,
+      "id": 1
+    },
+    {
+      "userId": 2,
+      "content": "keren",
+      "postId": 1,
+      "id": 2
+    },
+    {
+      "userId": 2,
+      "content": "keren banget",
+      "postId": 1,
+      "id": 3
+    },
+    {
+      "userId": 2,
+      "content": "wow",
+      "postId": 1,
+      "id": 4
+    },
+    {
+      "content": "bagus ya",
+      "postId": 2,
+      "userId": 2,
+      "id": 5
+    }
+  ],
+  "users": [
+    {
+      "username": "seto",
+      "full_name": "seto lee",
+      "email": "seto@mail.com",
+      "password": "password123",
+      "id": 1,
+      "bio": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
+      "avatar_url": "https://images.pexels.com/photos/8415157/pexels-photo-8415157.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+    },
+    {
+      "username": "Budi",
+      "full_name": "Budi Santos",
+      "email": "budi@mail.com",
+      "password": "password123",
+      "id": 2,
+      "bio": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
+      "avatar_url": "https://images.pexels.com/photos/8415157/pexels-photo-8415157.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+    },
+    {
+      "username": "Mark",
+      "full_name": "Mark lee",
+      "email": "mark@mail.com",
+      "password": "password123",
+      "id": 3,
+      "bio": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
+      "avatar_url": "https://images.pexels.com/photos/8415157/pexels-photo-8415157.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+    },
+    {
+      "username": "wati",
+      "full_name": "wati",
+      "email": "wati@mail.com",
+      "password": "password123",
+      "bio": "",
+      "avatar_url": "",
+      "id": 5
+    },
+    {
+      "username": "andi",
+      "full_name": "andi",
+      "email": "andi@mail.com",
+      "password": "password123",
+      "bio": "",
+      "avatar_url": "",
+      "id": 6
+    },
+    {
+      "username": "kito",
+      "full_name": "kito",
+      "email": "kito@mail.com",
+      "password": "password123",
+      "bio": "",
+      "avatar_url": "",
+      "id": 7
+    }
+  ]
+}
