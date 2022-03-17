@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { axiosInstance } from "../config/api";
 import Feeds from "../components/userFeed";
-// import { Link } from "react-router-dom";
 import Link from "next/link";
 import UserProfile from "../components/userProfile";
 import requiresAuth from "../config/requireAuth";
@@ -48,7 +47,7 @@ const MyProfilePage = () => {
           },
         })
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setuserPosts(res.data);
           setDataLength(res.data.length);
           setIsLoading(false);
@@ -61,17 +60,13 @@ const MyProfilePage = () => {
 
   useEffect(() => {
     // fetchUserData();
-    console.log(userSelector.bio);
+    // console.log(userSelector.bio);
     fetchUserPost();
   }, []);
 
   const renderPost = () => {
     return userPosts.map((val) => {
-      return (
-        <Link href={`/content-detail/${val.id}`}>
-          <Feeds imgUrl={val.imgUrl} />
-        </Link>
-      );
+      return <Feeds imgUrl={val.imgUrl} id={val.id} />;
     });
   };
 

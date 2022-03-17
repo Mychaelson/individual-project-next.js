@@ -141,7 +141,7 @@ const LoginForm = () => {
                 />
               </InputRightElement>
             </InputGroup>
-            <FormHelperText>We'll never share your email.</FormHelperText>
+            <FormHelperText>We'll never share your data.</FormHelperText>
           </FormControl>
         </Box>
         <Text mt={1} fontSize="smaller" color="#3b5cd4">
@@ -155,7 +155,6 @@ const LoginForm = () => {
         <Button onClick={loginButtonHandler} mt={5} colorScheme="teal">
           Sign in
         </Button>
-        {userSelector.full_name}
       </Box>
     </>
   );

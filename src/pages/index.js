@@ -15,7 +15,6 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
-          {authSelector.id}
         </h1>
 
         <Link href="/testing">go to testing page</Link>

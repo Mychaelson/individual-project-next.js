@@ -49,10 +49,11 @@ const ContentCard = ({
   likeStatusFnDblclick,
   id,
   userId,
+  userPhotoProfile,
 }) => {
   const [comments, setcomments] = useState([]);
   const [locationInput, setLocationInput] = useState(location);
-  const [captionInput, setCaptionInput] = useState(location);
+  const [captionInput, setCaptionInput] = useState(caption);
 
   const [displayCommentInput, setDisplayCommentInput] = useState(false);
 
@@ -130,6 +131,8 @@ const ContentCard = ({
     };
 
     axiosInstance.patch(`/contents/${id}`, editPost);
+
+    onClose();
   };
 
   let profileRedirect;
@@ -157,12 +160,7 @@ const ContentCard = ({
           my={2}
         >
           <Box display="flex" alignItems="center">
-            <Avatar
-              size="md"
-              name="user"
-              src="https://images.pexels.com/photos/8415157/pexels-photo-8415157.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-              marginX={3}
-            />
+            <Avatar size="md" name="user" src={userPhotoProfile} marginX={3} />
             <div>
               <Link href={profileRedirect}>
                 <Text
@@ -315,6 +313,7 @@ const ContentCard = ({
                 onClick={() => handleSubmit()}
                 colorScheme="teal"
                 type="submit"
+                ms={2}
               >
                 Post
               </Button>

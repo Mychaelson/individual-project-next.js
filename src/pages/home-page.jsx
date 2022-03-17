@@ -42,6 +42,7 @@ function HomePage() {
           imgUrl={val?.imgUrl}
           id={val?.id}
           userId={val.userId}
+          userPhotoProfile={val?.user?.avatar_url}
         />
       );
     });

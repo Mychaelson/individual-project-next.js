@@ -117,6 +117,7 @@ const ContentDetail = () => {
           imgUrl={data[0]?.imgUrl}
           id={data[0]?.id}
           userId={data[0]?.userId}
+          userPhotoProfile={data[0]?.user?.avatar_url}
         />
       </div>
     </Page>

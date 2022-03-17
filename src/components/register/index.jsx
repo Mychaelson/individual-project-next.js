@@ -45,7 +45,7 @@ const RegisterForm = () => {
   const userSelector = useSelector((state) => state.user);
   // const navigate = useNavigate();
 
-  const { setFieldValue, handleSubmit, errors, touched } = useFormik({
+  const { setFieldValue, handlSubmit, errors, touched } = useFormik({
     initialValues: {
       full_name: "",
       email: "",
@@ -109,7 +109,7 @@ const RegisterForm = () => {
     >
       <Heading size="lg">Register your new account</Heading>
       <Box mt={5}>
-        <FormControl isInvalid={errors.full_name}>
+        <FormControl isRequired isInvalid={errors.full_name}>
           <FormLabel htmlFor="fullName" mt={2}>
             Full Name
           </FormLabel>
@@ -123,7 +123,7 @@ const RegisterForm = () => {
             <FormErrorMessage>{errors.full_name}</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl isInvalid={errors.user_name}>
+        <FormControl isRequired isInvalid={errors.user_name}>
           <FormLabel htmlFor="username" mt={2}>
             Username
           </FormLabel>
@@ -137,7 +137,7 @@ const RegisterForm = () => {
             <FormErrorMessage>{errors.user_name}</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl isInvalid={errors.email}>
+        <FormControl isRequired isInvalid={errors.email}>
           <FormLabel htmlFor="email">Email address</FormLabel>
           <Input
             id="email"
@@ -149,7 +149,7 @@ const RegisterForm = () => {
             <FormErrorMessage>{errors.email}</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl isInvalid={errors.password}>
+        <FormControl isRequired isInvalid={errors.password}>
           <FormLabel htmlFor="password" mt={2}>
             Password
             <Tooltip
@@ -180,7 +180,7 @@ const RegisterForm = () => {
             <FormErrorMessage>{errors.password}</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl isInvalid={errors.confirmPassword}>
+        <FormControl isRequired isInvalid={errors.confirmPassword}>
           <FormLabel htmlFor="confirmPassword" mt={2}>
             Password
             <Tooltip
@@ -221,7 +221,7 @@ const RegisterForm = () => {
         mt={5}
         colorScheme="teal"
         onClick={() => {
-          handleSubmit();
+          handlSubmit();
         }}
       >
         Sign in

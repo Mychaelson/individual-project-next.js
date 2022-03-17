@@ -6,7 +6,7 @@
       "location": "Puncak",
       "likes": 1,
       "date": "03-03-2022",
-      "caption": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
+      "caption": "viewnya wow",
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/371589/pexels-photo-371589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
     },
@@ -29,6 +29,26 @@
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
       "id": 3
+    },
+    {
+      "userId": 1,
+      "location": "New York",
+      "likes": 0,
+      "date": "3-16-2022",
+      "caption": "city",
+      "likeStatus": false,
+      "imgUrl": "https://images.pexels.com/photos/1563256/pexels-photo-1563256.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+      "id": 4
+    },
+    {
+      "userId": 1,
+      "location": "New York",
+      "likes": 0,
+      "date": "3-16-2022",
+      "caption": "NYC baby!!",
+      "likeStatus": false,
+      "imgUrl": "https://images.pexels.com/photos/3889856/pexels-photo-3889856.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
+      "id": 5
     }
   ],
   "comments": [
@@ -66,12 +86,12 @@
   "users": [
     {
       "username": "seto",
-      "full_name": "seto lee",
+      "full_name": "seto kim",
       "email": "seto@mail.com",
       "password": "password123",
       "id": 1,
-      "bio": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque minus corrupti doloremque impedit quibusdam omnis quae reprehenderit possimus iure debitis, nemo nulla laboriosam vero accusantium numquam minima aperiam incidunt assumenda.",
-      "avatar_url": "https://images.pexels.com/photos/8415157/pexels-photo-8415157.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+      "bio": "aku seto",
+      "avatar_url": "https://images.pexels.com/photos/5990258/pexels-photo-5990258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
     },
     {
       "username": "Budi",

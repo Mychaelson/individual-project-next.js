@@ -37,6 +37,8 @@ import { axiosInstance } from "../../config/api";
 import moment from "moment";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const Navbar = () => {
   const [locationInput, setLocationInput] = useState("");
@@ -61,6 +63,47 @@ const Navbar = () => {
     router.push("/welcome-page");
   };
 
+  const formik = useFormik({
+    initialValues: {
+      location: "",
+      caption: "",
+      imgUrl: "",
+    },
+    validationSchema: yup.object().shape({
+      location: yup.string(),
+      caption: yup.string(),
+      imgUrl: yup.string().required("this field is required"),
+    }),
+    onSubmit: async (value) => {
+      let today = new Date();
+
+      let date =
+        today.getMonth() +
+        1 +
+        "-" +
+        today.getDate() +
+        "-" +
+        today.getFullYear();
+      try {
+        const newPost = {
+          userId: userSelector.id,
+          location: value.location,
+          likes: 0,
+          date: date,
+          caption: value.caption,
+          likeStatus: false,
+          imgUrl: value.imgUrl,
+        };
+
+        await axiosInstance.post("/contents", newPost);
+
+        onClose();
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+  });
+
   const inputHandler = (event, field) => {
     const { value } = event.target;
     if (field === "location") {
@@ -72,7 +115,7 @@ const Navbar = () => {
     }
   };
 
-  const postButtonHandler = () => {
+  const postButtonHandler = async () => {
     let today = new Date();
 
     let date =
@@ -90,7 +133,9 @@ const Navbar = () => {
       imgUrl: imgUrlInput,
     };
 
-    axiosInstance.post("/contents", newPost);
+    await axiosInstance.post("/contents", newPost);
+
+    onClose();
   };
 
   const loginButton = () => {
@@ -115,7 +160,12 @@ const Navbar = () => {
       >
         <Box className="col-span-1">
           <Link href="/home-page">
-            <Icon as={BiHomeSmile} pb={1} boxSize={10} />
+            <Icon
+              className="hover:cursor-pointer"
+              as={BiHomeSmile}
+              pb={1}
+              boxSize={10}
+            />
           </Link>
         </Box>
         <Box className="col-span-1">
@@ -161,7 +211,7 @@ const Navbar = () => {
                   <FormLabel htmlFor="locationInput">Location</FormLabel>
                   <Input
                     onChange={(e) => {
-                      inputHandler(e, "location");
+                      formik.setFieldValue("location", e.target.value);
                     }}
                     id="locationInput"
                     placeholder="Input location here"
@@ -171,7 +221,7 @@ const Navbar = () => {
                   <FormLabel htmlFor="captionInput">Caption</FormLabel>
                   <Textarea
                     onChange={(e) => {
-                      inputHandler(e, "caption");
+                      formik.setFieldValue("caption", e.target.value);
                     }}
                     id="captionInput"
                     placeholder="Input caption here"
@@ -181,7 +231,7 @@ const Navbar = () => {
                   <FormLabel htmlFor="imageInput">Image URL</FormLabel>
                   <Input
                     onChange={(e) => {
-                      inputHandler(e, "imgUrl");
+                      formik.setFieldValue("imgUrl", e.target.value);
                     }}
                     id="imageInput"
                     placeholder="Input image URL here"
@@ -192,7 +242,7 @@ const Navbar = () => {
                 <Button variant="outline" me={2} onClick={onClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="teal" onClick={postButtonHandler}>
+                <Button colorScheme="teal" onClick={formik.handleSubmit}>
                   Post
                 </Button>
               </ModalFooter>
