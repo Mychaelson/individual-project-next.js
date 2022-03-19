@@ -8,30 +8,31 @@ import Page from "../../components/Page";
 import { useRouter } from "next/router";
 import requiresAuth from "../../config/requireAuth";
 
-const ContentDetail = () => {
-  const [data, setData] = useState([]);
+const ContentDetail = ({ detailPostData }) => {
+  const [data, setData] = useState(detailPostData);
   const [isLoading, setIsLoading] = useState(false);
   // const params = useParams();
   const router = useRouter();
 
-  const fetchData = () => {
-    // const id = params.contentId;
-    setIsLoading(true);
-    setTimeout(() => {
-      axiosInstance
-        .get(`/contents?_expand=user&id=${router.query.contentDetail}`)
-        .then((res) => {
-          setData(res.data);
-          setIsLoading(false);
-        });
-    }, 1500);
-  };
+  // const fetchData = () => {
+  //   // const id = params.contentId;
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     axiosInstance
+  //       .get(`/contents?_expand=user&id=${router.query.contentDetail}`)
+  //       .then((res) => {
+  //         setData(res.data);
+  //         setIsLoading(false);
+  //       });
+  //   }, 1500);
+  // };
 
-  useEffect(() => {
-    if (router.isReady) {
-      fetchData();
-    }
-  }, [router.isReady]);
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     fetchData();
+  //     console.log(data);
+  //   }
+  // }, [router.isReady]);
 
   // const renderData = () => {
   //   return data.map((val, idx) => {
@@ -40,6 +41,10 @@ const ContentDetail = () => {
   //     );
   //   });
   // };
+
+  useEffect(() => {
+    console.log(detailPostData);
+  }, []);
 
   const changeLikeStatus = (id, oneClick = false, idx) => {
     const dataToFind = data.find((val) => {
@@ -104,29 +109,38 @@ const ContentDetail = () => {
       <div className="mt-3">
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
         {/* {renderData()} */}
-        <ContentCard
-          username={data[0]?.user?.username}
-          location={data[0]?.location}
-          likes={data[0]?.likes || 0}
-          date={data[0]?.date}
-          caption={data[0]?.caption}
-          likeStatus={data[0]?.likeStatus}
-          likeStatusFnOnclick={() => changeLikeStatus(data[0].id, true, 0)}
-          likeStatusFnDblclick={() => changeLikeStatus(data[0].id, false, 0)}
-          deleteDataFn={() => deleteData(data[0].id)}
-          imgUrl={data[0]?.imgUrl}
-          id={data[0]?.id}
-          userId={data[0]?.userId}
-          userPhotoProfile={data[0]?.user?.avatar_url}
-        />
+        {isLoading ? null : (
+          <ContentCard
+            username={data?.user?.username}
+            location={data?.location}
+            likes={data?.likes || 0}
+            date={data?.date}
+            caption={data?.caption}
+            likeStatus={data?.likeStatus}
+            likeStatusFnOnclick={() => changeLikeStatus(data.id, true, 0)}
+            likeStatusFnDblclick={() => changeLikeStatus(data.id, false, 0)}
+            deleteDataFn={() => deleteData(data.id)}
+            imgUrl={data?.imgUrl}
+            id={data?.id}
+            userId={data?.userId}
+            userPhotoProfile={data?.user?.avatar_url}
+          />
+        )}
       </div>
     </Page>
   );
 };
 
-export const getServerSideProps = requiresAuth((context) => {
+export const getServerSideProps = requiresAuth(async (context) => {
+  const res = await axiosInstance.get(
+    `/contents/${context.query.contentDetail}?_expand=user`
+  );
+
+  const data = res.data;
   return {
-    props: {},
+    props: {
+      detailPostData: data,
+    },
   };
 });
 

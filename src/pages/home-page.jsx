@@ -99,7 +99,13 @@ function HomePage() {
     setIsLoading(true);
     setTimeout(() => {
       axiosInstance
-        .get("/contents?_expand=user")
+        .get("/contents/", {
+          params: {
+            _expand: "user",
+            _sort: "date",
+            _order: "desc",
+          },
+        })
         .then((res) => {
           setData(res.data);
           setIsLoading(false);

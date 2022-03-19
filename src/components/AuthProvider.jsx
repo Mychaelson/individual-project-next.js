@@ -7,7 +7,7 @@ import { Box, Text } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 
 const AuthProvider = ({ children }) => {
-  const [isReloginChecked, setIsReloginChecked] = useState(false);
+  // const [isReloginChecked, setIsReloginChecked] = useState(false);
   const dispatch = useDispatch();
 
   const authSelector = useSelector((state) => state.user);
@@ -24,16 +24,8 @@ const AuthProvider = ({ children }) => {
       });
     }
 
-    setIsReloginChecked(true);
+    // setIsReloginChecked(true);
   }, []);
-
-  if (!isReloginChecked) {
-    return (
-      <Box>
-        <Text>loading ...</Text>
-      </Box>
-    );
-  }
   return children;
 };
 

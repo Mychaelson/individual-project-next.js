@@ -53,6 +53,10 @@ const Navbar = () => {
   // const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const refreshPage = () => {
+    window.location.reload(false);
+  };
+
   const logoutButtonHandler = () => {
     dispatch({
       type: user_types.LOGOUT_USER,
@@ -75,15 +79,16 @@ const Navbar = () => {
       imgUrl: yup.string().required("this field is required"),
     }),
     onSubmit: async (value) => {
-      let today = new Date();
+      const date = new Date();
+      // let today = moment().format("YYYY MM DD");
 
-      let date =
-        today.getMonth() +
-        1 +
-        "-" +
-        today.getDate() +
-        "-" +
-        today.getFullYear();
+      // let date =
+      //   today.getMonth() +
+      //   1 +
+      //   "-" +
+      //   today.getDate() +
+      //   "-" +
+      //   today.getFullYear();
       try {
         const newPost = {
           userId: userSelector.id,
@@ -96,6 +101,8 @@ const Navbar = () => {
         };
 
         await axiosInstance.post("/contents", newPost);
+
+        window.location.reload(true);
 
         onClose();
       } catch (error) {

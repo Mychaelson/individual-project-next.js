@@ -5,7 +5,7 @@
       "userId": 1,
       "location": "Puncak",
       "likes": 1,
-      "date": "03-03-2022",
+      "date": "2022-03-03",
       "caption": "viewnya wow",
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/371589/pexels-photo-371589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
@@ -15,7 +15,7 @@
       "userId": 1,
       "location": "Bandung",
       "likes": 1,
-      "date": "03-02-2022",
+      "date": "2022-03-01",
       "caption": "Dingin coyy",
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
@@ -24,7 +24,7 @@
       "userId": 1,
       "location": "Bogor",
       "likes": 1,
-      "date": "3-12-2022",
+      "date": "2022-03-12",
       "caption": "healing",
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
@@ -34,7 +34,7 @@
       "userId": 1,
       "location": "New York",
       "likes": 0,
-      "date": "3-16-2022",
+      "date": "2022-03-16",
       "caption": "city",
       "likeStatus": false,
       "imgUrl": "https://images.pexels.com/photos/1563256/pexels-photo-1563256.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
@@ -44,11 +44,31 @@
       "userId": 1,
       "location": "New York",
       "likes": 0,
-      "date": "3-16-2022",
+      "date": "2022-03-16",
       "caption": "NYC baby!!",
       "likeStatus": false,
       "imgUrl": "https://images.pexels.com/photos/3889856/pexels-photo-3889856.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
       "id": 5
+    },
+    {
+      "userId": 2,
+      "location": "chicago",
+      "likes": 0,
+      "date": "2022-03-18",
+      "caption": "keren coyyy",
+      "likeStatus": false,
+      "imgUrl": "https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+      "id": 6
+    },
+    {
+      "userId": 2,
+      "location": "jakarta",
+      "likes": 0,
+      "date": "2022-03-18T10:22:36.672Z",
+      "caption": "kskksksk",
+      "likeStatus": false,
+      "imgUrl": "https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "id": 8
     }
   ],
   "comments": [

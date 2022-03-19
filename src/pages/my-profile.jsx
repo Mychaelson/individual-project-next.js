@@ -10,7 +10,7 @@ import requiresAuth from "../config/requireAuth";
 // ini untuk page sendiri
 // klo ad perubahan profile, setelah oatch, harus update reduxnya
 
-const MyProfilePage = () => {
+const MyProfilePage = ({ userData }) => {
   // const [userData, setUserData] = useState({});
   const [userPosts, setuserPosts] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -43,7 +43,7 @@ const MyProfilePage = () => {
         .get("/contents", {
           params: {
             _expand: "user",
-            userId: userSelector.id,
+            userId: userData.id,
           },
         })
         .then((res) => {
@@ -60,6 +60,7 @@ const MyProfilePage = () => {
 
   useEffect(() => {
     // fetchUserData();
+    console.log(userData.id);
     // console.log(userSelector.bio);
     fetchUserPost();
   }, []);
@@ -95,8 +96,13 @@ const MyProfilePage = () => {
 };
 
 export const getServerSideProps = requiresAuth((context) => {
+  const userData = context.req.cookies.user_data;
+  const parsedUserData = JSON.parse(userData);
+
   return {
-    props: {},
+    props: {
+      userData: parsedUserData,
+    },
   };
 });
 
