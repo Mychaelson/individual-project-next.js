@@ -1,16 +1,6 @@
 {
   "contents": [
     {
-      "id": 1,
-      "userId": 1,
-      "location": "Puncak",
-      "likes": 1,
-      "date": "2022-03-03",
-      "caption": "viewnya wow",
-      "likeStatus": true,
-      "imgUrl": "https://images.pexels.com/photos/371589/pexels-photo-371589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-    },
-    {
       "id": 2,
       "userId": 1,
       "location": "Bandung",
@@ -19,16 +9,6 @@
       "caption": "Dingin coyy",
       "likeStatus": true,
       "imgUrl": "https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-    },
-    {
-      "userId": 1,
-      "location": "Bogor",
-      "likes": 1,
-      "date": "2022-03-12",
-      "caption": "healing",
-      "likeStatus": true,
-      "imgUrl": "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-      "id": 3
     },
     {
       "userId": 1,

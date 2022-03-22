@@ -11,84 +11,51 @@ import requiresAuth from "../../config/requireAuth";
 const ContentDetail = ({ detailPostData }) => {
   const [data, setData] = useState(detailPostData);
   const [isLoading, setIsLoading] = useState(false);
-  // const params = useParams();
   const router = useRouter();
-
-  // const fetchData = () => {
-  //   // const id = params.contentId;
-  //   setIsLoading(true);
-  //   setTimeout(() => {
-  //     axiosInstance
-  //       .get(`/contents?_expand=user&id=${router.query.contentDetail}`)
-  //       .then((res) => {
-  //         setData(res.data);
-  //         setIsLoading(false);
-  //       });
-  //   }, 1500);
-  // };
-
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     fetchData();
-  //     console.log(data);
-  //   }
-  // }, [router.isReady]);
-
-  // const renderData = () => {
-  //   return data.map((val, idx) => {
-  //     return (
-
-  //     );
-  //   });
-  // };
 
   useEffect(() => {
     console.log(detailPostData);
   }, []);
 
   const changeLikeStatus = (id, oneClick = false, idx) => {
-    const dataToFind = data.find((val) => {
-      return val.id === id;
-    });
-
-    if (!dataToFind.likeStatus && oneClick) {
-      let likesIncrement = dataToFind.likes + 1;
+    if (!data.likeStatus && oneClick) {
+      let likesIncrement = data.likes + 1;
       axiosInstance
         .patch(`/contents/${id}`, {
           likes: likesIncrement,
-          likeStatus: !dataToFind.likeStatus,
+          likeStatus: !data.likeStatus,
         })
         .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes++;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
+          let newObj = { ...data };
+          newObj.likes++;
+          newObj.likeStatus = !newObj.likeStatus;
+          setData(newObj);
         });
-    } else if (dataToFind.likeStatus && oneClick) {
-      let likesDecrement = dataToFind.likes - 1;
+    } else if (data.likeStatus && oneClick) {
+      let likesDecrement = data.likes - 1;
       axiosInstance
         .patch(`/contents/${id}`, {
           likes: likesDecrement,
-          likeStatus: !dataToFind,
+          likeStatus: !data,
         })
         .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes--;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
+          let newObj = { ...data };
+          newObj.likes--;
+          newObj.likeStatus = !newObj.likeStatus;
+          setData(newObj);
         });
-    } else if (!dataToFind.likeStatus) {
-      let likesIncrement = dataToFind.likes + 1;
+    } else if (!data.likeStatus) {
+      let likesIncrement = data.likes + 1;
       axiosInstance
         .patch(`/contents/${id}`, {
           likes: likesIncrement,
-          likeStatus: !dataToFind.likeStatus,
+          likeStatus: !data.likeStatus,
         })
         .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes++;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
+          let newObj = { ...data };
+          newObj.likes++;
+          newObj.likeStatus = !newObj.likeStatus;
+          setData(newObj);
         });
     }
   };
@@ -98,8 +65,8 @@ const ContentDetail = ({ detailPostData }) => {
     let confirmDelete = window.confirm("Delete the post?");
 
     if (confirmDelete) {
-      axios.delete(`http://localhost:4000/contents/${id}`).then(() => {
-        fetchData();
+      axiosInstance.delete(`/contents/${id}`).then(() => {
+        router.push("/home-page");
       });
     }
   };
