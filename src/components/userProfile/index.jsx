@@ -18,7 +18,7 @@ import {
   Button,
   Textarea,
 } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineEdit } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -31,6 +31,7 @@ const UserProfile = (props) => {
   // const [username, setUsername] = useState(userSelector.username);
   // const [avatarUrl, setAvatarUrl] = useState(userSelector.avatar_url);
   const userSelector = useSelector((state) => state.user);
+  const dispatch = useDispatch(); // TODO: change the redux after the profile change
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -67,6 +68,10 @@ const UserProfile = (props) => {
         };
 
         await axiosInstance.patch(`/users/${userSelector.id}`, editProfile);
+
+        // dispatch redux
+
+        onClose();
       } catch (error) {
         console.log(error.message);
       }

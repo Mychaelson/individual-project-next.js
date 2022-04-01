@@ -110,6 +110,12 @@ function HomePage() {
           setData(res.data);
           setIsLoading(false);
         })
+        // axiosInstance
+        //   .get("/contents")
+        //   .then((res) => {
+        //     setData(res.data.result);
+        //     setIsLoading(false);
+        //   })
         .catch((err) => {
           setIsLoading(false);
           Toast({

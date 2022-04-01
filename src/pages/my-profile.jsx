@@ -63,7 +63,7 @@ const MyProfilePage = ({ userData }) => {
     console.log(userData.id);
     // console.log(userSelector.bio);
     fetchUserPost();
-  }, []);
+  }, [userSelector.bio]);
 
   const renderPost = () => {
     return userPosts.map((val) => {
