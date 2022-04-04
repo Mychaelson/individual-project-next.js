@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
-import { axiosInstance } from "../../config/api";
+import axiosInstance from "../../config/api";
 import { useDispatch, useSelector } from "react-redux";
 import user_types from "../../redux/reducers/user/types";
 import Link from "next/link";
@@ -49,57 +49,41 @@ const LoginForm = () => {
     }
   };
 
-  const loginButtonHandler = () => {
-    axiosInstance
-      .get("/users", {
-        params: {
-          username: usernameInput,
-          password: passwordInput,
-        },
-      })
-      .then((res) => {
-        const userLogin = res.data[0];
-        if (userLogin) {
-          dispatch({
-            type: user_types.LOGIN_USER,
-            payload: {
-              username: userLogin.username,
-              full_name: userLogin.full_name,
-              email: userLogin.email,
-              id: userLogin.id,
-              bio: userLogin.bio,
-              avatar_url: userLogin.avatar_url,
-            },
-          });
-
-          const parsedUserData = JSON.stringify({
-            username: userLogin.username,
-            full_name: userLogin.full_name,
-            email: userLogin.email,
-            id: userLogin.id,
-            bio: userLogin.bio,
-            avatar_url: userLogin.avatar_url,
-          });
-
-          // console.log(userLogin);
-
-          Cookies.set("user_data", parsedUserData);
-
-          router.push("/home-page");
-        } else {
-          toast({
-            title: "login failed",
-            description: "Username or password is invalid",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-            position: "top",
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+  const loginButtonHandler = async () => {
+    try {
+      const res = await axiosInstance.post("/auth/login", {
+        username: usernameInput,
+        password: passwordInput,
       });
+
+      const userLogin = res.data.result.findUser;
+
+      dispatch({
+        type: user_types.LOGIN_USER,
+        payload: {
+          username: userLogin.username,
+          full_name: userLogin.full_name,
+          email: userLogin.email,
+          id: userLogin.id,
+          bio: userLogin.bio,
+          avatar_url: userLogin.avatar_url,
+        },
+      });
+
+      Cookies.set("auth_token", res.data.result.token);
+
+      router.push("/home-page");
+    } catch (err) {
+      console.log(err.response);
+      toast({
+        title: "login failed",
+        description: err.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
   };
 
   return (

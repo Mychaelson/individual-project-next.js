@@ -25,7 +25,7 @@ import {
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { axiosInstance } from "../../config/api";
+import axiosInstance from "../../config/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -45,7 +45,7 @@ const RegisterForm = () => {
   const userSelector = useSelector((state) => state.user);
   // const navigate = useNavigate();
 
-  const { setFieldValue, handlSubmit, errors, touched } = useFormik({
+  const { setFieldValue, handleSubmit, errors, touched } = useFormik({
     initialValues: {
       full_name: "",
       email: "",
@@ -60,11 +60,9 @@ const RegisterForm = () => {
           full_name: values.full_name,
           email: values.email,
           password: values.password,
-          bio: "",
-          avatar_url: "",
         };
 
-        await axiosInstance.post("/users", newUser);
+        await axiosInstance.post("/auth/register", newUser);
       } catch (error) {
         console.log(error);
       }
@@ -221,7 +219,7 @@ const RegisterForm = () => {
         mt={5}
         colorScheme="teal"
         onClick={() => {
-          handlSubmit();
+          handleSubmit();
         }}
       >
         Sign in

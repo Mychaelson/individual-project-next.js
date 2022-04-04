@@ -62,7 +62,7 @@ const Navbar = () => {
       type: user_types.LOGOUT_USER,
     });
 
-    Cookies.remove("user_data");
+    Cookies.remove("auth_token");
 
     router.push("/welcome-page");
   };

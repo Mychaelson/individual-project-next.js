@@ -5,27 +5,52 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Box, Text } from "@chakra-ui/react";
 import Cookies from "js-cookie";
+import axiosInstance from "../config/api";
 
 const AuthProvider = ({ children }) => {
-  // const [isReloginChecked, setIsReloginChecked] = useState(false);
   const dispatch = useDispatch();
 
   const authSelector = useSelector((state) => state.user);
 
-  useEffect(() => {
-    const savedUserData = Cookies.get("user_data");
-    // console.log(savedUserData);
+  useEffect(async () => {
+    const auth_token = Cookies.get("auth_token");
 
-    if (savedUserData) {
-      const parsedUserData = JSON.parse(savedUserData);
-      dispatch({
-        type: user_types.LOGIN_USER,
-        payload: parsedUserData,
-      });
+    if (auth_token) {
+      try {
+        const userResponse = await axiosInstance.get("/auth/refresh-token");
+
+        Cookies.set("auth_token", userResponse?.data?.result?.token || "");
+
+        const userLogin = userResponse.data.result.user;
+
+        console.log(userLogin);
+
+        dispatch({
+          type: user_types.LOGIN_USER,
+          payload: {
+            username: userLogin.username,
+            full_name: userLogin.full_name,
+            email: userLogin.email,
+            id: userLogin.id,
+            bio: userLogin.bio,
+            avatar_url: userLogin.avatar_url,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+        // toast({
+        //   title: "relogin failed",
+        //   description: "Username or password is invalid",
+        //   status: "error",
+        //   duration: 3000,
+        //   isClosable: true,
+        //   position: "top",
+        // });
+      }
     }
-
-    // setIsReloginChecked(true);
   }, []);
+
+  console.log(authSelector.email);
   return children;
 };
 
