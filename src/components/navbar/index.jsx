@@ -24,7 +24,7 @@ import {
   FormLabel,
   Textarea,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useRef } from "react";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
 import { BiLogOut, BiHomeSmile, BiLogIn } from "react-icons/bi";
@@ -33,7 +33,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import user_types from "../../redux/reducers/user/types";
 import { useState } from "react";
-import { axiosInstance } from "../../config/api";
+import axiosInstance from "../../config/api";
 import moment from "moment";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -43,7 +43,8 @@ import * as yup from "yup";
 const Navbar = () => {
   const [locationInput, setLocationInput] = useState("");
   const [captionInput, setCaptionInput] = useState("");
-  const [imgUrlInput, setImgUrlInput] = useState("");
+  // const [imgUrlInput, setImgUrlInput] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const userSelector = useSelector((state) => state.user);
 
@@ -52,6 +53,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   // const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const inputFileRef = useRef(null);
 
   const refreshPage = () => {
     window.location.reload(false);
@@ -71,82 +73,46 @@ const Navbar = () => {
     initialValues: {
       location: "",
       caption: "",
-      imgUrl: "",
     },
     validationSchema: yup.object().shape({
       location: yup.string(),
       caption: yup.string(),
-      imgUrl: yup.string().required("this field is required"),
     }),
-    onSubmit: async (value) => {
-      const date = new Date();
-      // let today = moment().format("YYYY MM DD");
-
-      // let date =
-      //   today.getMonth() +
-      //   1 +
-      //   "-" +
-      //   today.getDate() +
-      //   "-" +
-      //   today.getFullYear();
-      try {
-        const newPost = {
-          userId: userSelector.id,
-          location: value.location,
-          likes: 0,
-          date: date,
-          caption: value.caption,
-          likeStatus: false,
-          imgUrl: value.imgUrl,
-        };
-
-        await axiosInstance.post("/contents", newPost);
-
-        window.location.reload(true);
-
-        onClose();
-      } catch (error) {
-        console.log(error.message);
-      }
-    },
   });
 
-  const inputHandler = (event, field) => {
-    const { value } = event.target;
-    if (field === "location") {
-      setLocationInput(value);
-    } else if (field === "caption") {
-      setCaptionInput(value);
-    } else if (field === "imgUrl") {
-      setImgUrlInput(value);
+  const uploadContentHandler = async () => {
+    // Proteksi jika file belum dipilih
+    if (!selectedFile) {
+      alert("Anda belum pilih file");
+      return;
     }
-  };
 
-  const postButtonHandler = async () => {
-    let today = new Date();
+    const formData = new FormData();
+    const { caption, location } = formik.values;
 
-    let date =
-      today.getMonth() + 1 + "-" + today.getDate() + "-" + today.getFullYear();
+    formData.append("caption", caption);
+    formData.append("location", location);
+    formData.append("post_image_file", selectedFile);
 
-    // let date = moment().format("MM-DD-YYYY");
+    try {
+      await axiosInstance.post("/post", formData);
+      setSelectedFile(null);
+      formik.setFieldValue("caption", "");
+      formik.setFieldValue("location", "");
 
-    const newPost = {
-      userId: userSelector.id,
-      location: locationInput,
-      likes: 0,
-      date: date,
-      caption: captionInput,
-      likeStatus: false,
-      imgUrl: imgUrlInput,
-    };
-
-    await axiosInstance.post("/contents", newPost);
-
-    onClose();
+      refreshPage();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const loginButton = () => {
     router.push("/login");
+  };
+
+  const handleFile = (event) => {
+    setSelectedFile(event.target.files[0]);
+    alert(event?.target?.files[0]?.name);
   };
 
   return (
@@ -237,19 +203,26 @@ const Navbar = () => {
                 <FormControl>
                   <FormLabel htmlFor="imageInput">Image URL</FormLabel>
                   <Input
-                    onChange={(e) => {
-                      formik.setFieldValue("imgUrl", e.target.value);
-                    }}
+                    onChange={handleFile}
+                    ref={inputFileRef}
                     id="imageInput"
-                    placeholder="Input image URL here"
+                    // placeholder="Input image URL here"
+                    type="file"
+                    display="none"
                   />
+                  <Button
+                    onClick={() => inputFileRef.current.click()}
+                    colorScheme="facebook"
+                  >
+                    Choose File
+                  </Button>
                 </FormControl>
               </ModalBody>
               <ModalFooter>
                 <Button variant="outline" me={2} onClick={onClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="teal" onClick={formik.handleSubmit}>
+                <Button colorScheme="teal" onClick={uploadContentHandler}>
                   Post
                 </Button>
               </ModalFooter>

@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 // import "../assets/style.css";
-import { axiosInstance } from "../config/api";
+import axiosInstance from "../config/api";
 import Navbar from "../components/navbar";
 import Page from "../components/Page";
 
@@ -30,19 +30,20 @@ function HomePage() {
     return data.map((val, idx) => {
       return (
         <ContentCard
-          username={val?.user?.username}
+          username={val?.user_posts?.username}
           location={val?.location}
-          likes={val?.likes}
-          date={val?.date}
+          likes={val?.like_count}
+          date={val?.createdAt}
           caption={val?.caption}
-          likeStatus={val?.likeStatus}
           likeStatusFnOnclick={() => changeLikeStatus(val.id, true, idx)}
           likeStatusFnDblclick={() => changeLikeStatus(val.id, false, idx)}
           deleteDataFn={() => deleteData(val.id)}
-          imgUrl={val?.imgUrl}
+          imgUrl={val?.image_url}
           id={val?.id}
-          userId={val.userId}
-          userPhotoProfile={val?.user?.avatar_url}
+          userId={val?.user_posts?.id}
+          userPhotoProfile={val?.user_posts?.avatar_img}
+          post_comments={val?.comments}
+          // likeStatus={like_status}
         />
       );
     });
@@ -95,46 +96,40 @@ function HomePage() {
     }
   };
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      axiosInstance
-        .get("/contents/", {
-          params: {
-            _expand: "user",
-            _sort: "date",
-            _order: "desc",
-          },
-        })
-        .then((res) => {
-          setData(res.data);
-          setIsLoading(false);
-        })
-        // axiosInstance
-        //   .get("/contents")
-        //   .then((res) => {
-        //     setData(res.data.result);
-        //     setIsLoading(false);
-        //   })
-        .catch((err) => {
-          setIsLoading(false);
-          Toast({
-            title: "Fetch Data Failed",
-            description: "Server Error.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "top",
-          });
-        });
-    }, 2000);
+    try {
+      const res = await axiosInstance.get("/post", {
+        params: {
+          _limit: 10,
+          _page: 1,
+          _sortBy: "createdAt",
+          _sortDir: "DESC",
+        },
+      });
+
+      const allPost = res.data.result.rows;
+
+      setData(allPost);
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      Toast({
+        title: "Fetch Data Failed",
+        description: err.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    }
   };
 
   const deleteData = (id) => {
     let confirmDelete = window.confirm("Delete the post?");
 
     if (confirmDelete) {
-      axiosInstance.delete(`/contents/${id}`).then(() => {
+      axiosInstance.delete(`/post/${id}`).then(() => {
         fetchData();
       });
     }

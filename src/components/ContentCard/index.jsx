@@ -30,7 +30,7 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import Comments from "../comments";
 import { useFormik } from "formik";
-import { axiosInstance } from "../../config/api";
+import axiosInstance from "../../config/api";
 // import { Link } from "react-router-dom";
 import Link from "next/link";
 import * as Yup from "yup";
@@ -50,8 +50,9 @@ const ContentCard = ({
   id,
   userId,
   userPhotoProfile,
+  post_comments,
 }) => {
-  const [comments, setcomments] = useState([]);
+  const [comment, setcomment] = useState(post_comments);
   const [locationInput, setLocationInput] = useState(location);
   const [captionInput, setCaptionInput] = useState(caption);
 
@@ -62,26 +63,31 @@ const ContentCard = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    fetchComments();
+    // console.log(Comments);
+    // fetchComments();
   }, []);
 
-  const fetchComments = () => {
-    axiosInstance
-      .get(`/comments`, {
-        params: {
-          postId: id,
-          _expand: "user",
-        },
-      })
-      .then((res) => {
-        setcomments(res.data);
-      });
-  };
+  // const fetchComments = () => {
+  //   axiosInstance
+  //     .get(`/comments`, {
+  //       params: {
+  //         postId: id,
+  //         _expand: "user",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setcomments(res.data);
+  //     });
+  // };
 
   const renderComments = () => {
-    return comments.map((val) => {
-      return <Comments username={val?.user?.username} content={val.content} />;
+    return comment.map((val) => {
+      return <Comments username={val?.user?.username} content={val.comment} />;
     });
+  };
+
+  const refreshPage = () => {
+    window.location.reload(false);
   };
 
   //TODO: yup
@@ -91,20 +97,18 @@ const ContentCard = ({
     },
     onSubmit: async (values) => {
       const newComment = {
-        content: values.comment,
-        postId: id,
-        userId: userSelector?.id,
+        comment: values.comment,
+        post_id: id,
       };
+      try {
+        await axiosInstance.post("/comment", newComment);
+        refreshPage();
+      } catch (err) {
+        console.log(err);
+      }
 
-      await axiosInstance.post("/comments", newComment);
-
-      fetchComments();
+      // fetchComments();
       setDisplayCommentInput(false);
-
-      // axiosInstance.post("/comments", newComment).then(() => {
-      //   fetchComments();
-      //   setDisplayCommentInput(false);
-      // });
     },
     validationSchema: Yup.object().shape({
       comment: Yup.string()
@@ -114,26 +118,31 @@ const ContentCard = ({
     }),
   });
 
-  const inputHandler = (event, field) => {
-    const { value } = event.target;
+  const editPost = useFormik({
+    initialValues: {
+      location,
+      caption,
+    },
+    validationSchema: Yup.object().shape({
+      location: Yup.string()
+        .min(3, "Minimum 3 character")
+        .max(20, "maximum 20 characters"),
+    }),
+    onSubmit: async (values) => {
+      const editPost = {
+        location: values?.location,
+        caption: values?.caption,
+      };
 
-    if (field === "location") {
-      setLocationInput(value);
-    } else if (field === "caption") {
-      setCaptionInput(value);
-    }
-  };
+      try {
+        await axiosInstance.patch(`/post/${id}`, editPost);
 
-  const postButton = () => {
-    const editPost = {
-      location: locationInput,
-      caption: captionInput,
-    };
-
-    axiosInstance.patch(`/contents/${id}`, editPost);
-
-    onClose();
-  };
+        onClose();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  });
 
   let profileRedirect;
 
@@ -210,9 +219,9 @@ const ContentCard = ({
                     <FormLabel htmlFor="locationInput">Location</FormLabel>
                     <Input
                       onChange={(e) => {
-                        inputHandler(e, "location");
+                        editPost.setFieldValue("location", e.target.value);
                       }}
-                      value={locationInput}
+                      value={editPost.values.location}
                       id="locationInput"
                     />
                   </FormControl>
@@ -220,9 +229,9 @@ const ContentCard = ({
                     <FormLabel htmlFor="captionInput">Caption</FormLabel>
                     <Textarea
                       onChange={(e) => {
-                        inputHandler(e, "caption");
+                        editPost.setFieldValue("caption", e.target.value);
                       }}
-                      value={captionInput}
+                      value={editPost.values.caption}
                       id="captionInput"
                     />
                   </FormControl>
@@ -231,7 +240,7 @@ const ContentCard = ({
                   <Button variant="outline" me={2} onClick={onClose}>
                     Cancel
                   </Button>
-                  <Button onClick={postButton} colorScheme="teal">
+                  <Button onClick={editPost.handleSubmit} colorScheme="teal">
                     Edit
                   </Button>
                 </ModalFooter>
@@ -286,7 +295,7 @@ const ContentCard = ({
           </Text>
         </Box>
         <Text ps={4} pt={3} fontSize="sm">
-          {likes.toLocaleString()} Likes
+          {likes} Likes
         </Text>
         <Box>
           <Text fontSize="md" px={4} py={1}>
@@ -302,7 +311,6 @@ const ContentCard = ({
           {displayCommentInput ? (
             <Box display="flex" alignItems="center" mt={2}>
               {/* <Form> */}
-              {/* <commentInput onClickFn={inputCommentHandler} /> */}
               <Input
                 onChange={(e) => setFieldValue("comment", e.target.value)}
                 type="text"

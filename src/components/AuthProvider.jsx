@@ -23,8 +23,6 @@ const AuthProvider = ({ children }) => {
 
         const userLogin = userResponse.data.result.user;
 
-        console.log(userLogin);
-
         dispatch({
           type: user_types.LOGIN_USER,
           payload: {
@@ -49,8 +47,6 @@ const AuthProvider = ({ children }) => {
       }
     }
   }, []);
-
-  console.log(authSelector.email);
   return children;
 };
 
