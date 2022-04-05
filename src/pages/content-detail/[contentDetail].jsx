@@ -2,20 +2,46 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";
 import ContentCard from "../../components/ContentCard";
-import { Spinner, Center } from "@chakra-ui/react";
-import { axiosInstance } from "../../config/api";
+import { Spinner, Center, useToast } from "@chakra-ui/react";
+import axiosInstance from "../../config/api";
 import Page from "../../components/Page";
 import { useRouter } from "next/router";
 import requiresAuth from "../../config/requireAuth";
 
+let post_id;
+
 const ContentDetail = ({ detailPostData }) => {
   const [data, setData] = useState(detailPostData);
   const [isLoading, setIsLoading] = useState(false);
+  const [comment, setComment] = useState([]);
   const router = useRouter();
+  const Toast = useToast();
 
   useEffect(() => {
-    console.log(detailPostData);
+    fetchComments();
   }, []);
+
+  const fetchComments = async () => {
+    try {
+      const commentResult = await axiosInstance.get("/comment", {
+        params: {
+          post_id: data.id,
+        },
+      });
+
+      setComment(commentResult.data.result.rows);
+    } catch (err) {
+      console.log(err);
+      Toast({
+        title: "Fetch Data Failed",
+        description: err.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
 
   const changeLikeStatus = (id, oneClick = false, idx) => {
     if (!data.likeStatus && oneClick) {
@@ -60,16 +86,23 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
-  // TODO: want to redirect to homepage
   const deleteData = (id) => {
     let confirmDelete = window.confirm("Delete the post?");
 
     if (confirmDelete) {
-      axiosInstance.delete(`/contents/${id}`).then(() => {
+      axiosInstance.delete(`/post/${id}`).then(() => {
         router.push("/home-page");
       });
     }
   };
+
+  let like_status;
+
+  if (data?.post_like?.length) {
+    like_status = true;
+  } else {
+    like_status = false;
+  }
 
   return (
     <Page>
@@ -78,19 +111,20 @@ const ContentDetail = ({ detailPostData }) => {
         {/* {renderData()} */}
         {isLoading ? null : (
           <ContentCard
-            username={data?.user?.username}
+            username={data?.user_posts?.username}
             location={data?.location}
-            likes={data?.likes || 0}
-            date={data?.date}
+            likes={data?.like_count || 0}
             caption={data?.caption}
-            likeStatus={data?.likeStatus}
+            likeStatus={like_status}
             likeStatusFnOnclick={() => changeLikeStatus(data.id, true, 0)}
             likeStatusFnDblclick={() => changeLikeStatus(data.id, false, 0)}
             deleteDataFn={() => deleteData(data.id)}
-            imgUrl={data?.imgUrl}
+            imgUrl={data?.image_url}
             id={data?.id}
-            userId={data?.userId}
-            userPhotoProfile={data?.user?.avatar_url}
+            userId={data?.user_id}
+            userPhotoProfile={data?.user_posts?.avatar_img}
+            post_comments={comment}
+            date={data?.createdAt}
           />
         )}
       </div>
@@ -99,11 +133,18 @@ const ContentDetail = ({ detailPostData }) => {
 };
 
 export const getServerSideProps = requiresAuth(async (context) => {
-  const res = await axiosInstance.get(
-    `/contents/${context.query.contentDetail}?_expand=user`
-  );
+  console.log(context.req.cookies.auth_token);
+  const res = await axios.get(`http://localhost:2000/post`, {
+    params: {
+      id: context.query.contentDetail,
+    },
+    headers: {
+      Authorization: context.req.cookies.auth_token,
+    },
+  });
 
-  const data = res.data;
+  const data = res.data.result.rows[0];
+  console.log(data);
   return {
     props: {
       detailPostData: data,

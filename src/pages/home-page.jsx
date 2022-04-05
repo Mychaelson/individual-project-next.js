@@ -15,10 +15,12 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../config/api";
 import Navbar from "../components/navbar";
 import Page from "../components/Page";
+import { useSelector } from "react-redux";
 
 function HomePage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const userSelector = useSelector((state) => state.user);
 
   useEffect(() => {
     fetchData();
@@ -28,6 +30,13 @@ function HomePage() {
 
   const renderData = () => {
     return data.map((val, idx) => {
+      let like_status;
+
+      if (val?.post_like?.length) {
+        like_status = true;
+      } else {
+        like_status = false;
+      }
       return (
         <ContentCard
           username={val?.user_posts?.username}
@@ -35,66 +44,110 @@ function HomePage() {
           likes={val?.like_count}
           date={val?.createdAt}
           caption={val?.caption}
-          likeStatusFnOnclick={() => changeLikeStatus(val.id, true, idx)}
-          likeStatusFnDblclick={() => changeLikeStatus(val.id, false, idx)}
+          // likeStatusFnOnclick={() => editLikes(val.id, true, idx)}
+          likeStatusFnDblclick={() => editLikes(val.id, false, idx)}
+          addLike={() => {
+            addLike(val?.id, userSelector.id, idx);
+          }}
+          removeLike={() => {
+            removeLike(val.id, userSelector.id, idx);
+          }}
           deleteDataFn={() => deleteData(val.id)}
           imgUrl={val?.image_url}
           id={val?.id}
           userId={val?.user_posts?.id}
           userPhotoProfile={val?.user_posts?.avatar_img}
           post_comments={val?.comments}
-          // likeStatus={like_status}
+          likeStatus={like_status}
         />
       );
     });
   };
 
-  const changeLikeStatus = (id, oneClick = false, idx) => {
-    const dataToFind = data.find((val) => {
-      return val.id === id;
-    });
+  // const editLikes = async (id, oneClick = false, idx) => {
+  //   const dataToFind = data.find((val) => {
+  //     return val.id === id;
+  //   });
 
-    if (!dataToFind.likeStatus && oneClick) {
-      let likesIncrement = dataToFind.likes + 1;
-      axiosInstance
-        .patch(`/contents/${id}`, {
-          likes: likesIncrement,
-          likeStatus: !dataToFind.likeStatus,
-        })
-        .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes++;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
-        });
-    } else if (dataToFind.likeStatus && oneClick) {
-      let likesDecrement = dataToFind.likes - 1;
-      axiosInstance
-        .patch(`/contents/${id}`, {
-          likes: likesDecrement,
-          likeStatus: !dataToFind,
-        })
-        .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes--;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
-        });
-    } else if (!dataToFind.likeStatus) {
-      let likesIncrement = dataToFind.likes + 1;
-      axiosInstance
-        .patch(`/contents/${id}`, {
-          likes: likesIncrement,
-          likeStatus: !dataToFind.likeStatus,
-        })
-        .then(() => {
-          let newArr = [...data];
-          newArr[idx].likes++;
-          newArr[idx].likeStatus = !newArr[idx].likeStatus;
-          setData(newArr);
-        });
+  //   try {
+  //     if (!dataToFind.likeStatus && oneClick) {
+  //       await axiosInstance.post(`/post/${id}/likes/${userSelector.id}`);
+  //     } else if (dataToFind.likeStatus && oneClick) {
+  //       await axiosInstance.delete(`/post/${id}/likes/${userSelector.id}`);
+  //     } else if (!dataToFind.likeStatus) {
+  //       await axiosInstance.post(`/post/${id}/likes/${userSelector.id}`);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const addLike = async (post_id, user_id, idx) => {
+    try {
+      await axiosInstance.post(`/post/${post_id}/likes/${user_id}`);
+      ``;
+
+      let newArr = [...data];
+      newArr[idx].like_count++;
+      setData(newArr);
+    } catch (err) {
+      console.log(err);
     }
   };
+
+  const removeLike = async (post_id, user_id, idx) => {
+    try {
+      await axiosInstance.delete(`/post/${post_id}/likes/${user_id}`);
+
+      let newArr = [...data];
+      newArr[idx].like_count--;
+      setData(newArr);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // const changeLikeStatus = (id, oneClick = false, idx) => {
+  //   const dataToFind = data.find((val) => {
+  //     return val.id === id;
+  //   });
+
+  //   if (!dataToFind.likeStatus && oneClick) {
+  //     let likesIncrement = dataToFind.likes + 1;
+  //     axiosInstance.post(`/post/${id}/likes/${userSelector.id}`).then(() => {
+  //       let newArr = [...data];
+  //       newArr[idx].like_count++;
+  //       // newArr[idx].likeStatus = !newArr[idx].likeStatus;
+  //       setData(newArr);
+  //     });
+  //   } else if (dataToFind.likeStatus && oneClick) {
+  //     let likesDecrement = dataToFind.likes - 1;
+  //     axiosInstance
+  //       .patch(`/contents/${id}`, {
+  //         likes: likesDecrement,
+  //         likeStatus: !dataToFind,
+  //       })
+  //       .then(() => {
+  //         let newArr = [...data];
+  //         newArr[idx].likes--;
+  //         newArr[idx].likeStatus = !newArr[idx].likeStatus;
+  //         setData(newArr);
+  //       });
+  //   } else if (!dataToFind.likeStatus) {
+  //     let likesIncrement = dataToFind.likes + 1;
+  //     axiosInstance
+  //       .patch(`/contents/${id}`, {
+  //         likes: likesIncrement,
+  //         likeStatus: !dataToFind.likeStatus,
+  //       })
+  //       .then(() => {
+  //         let newArr = [...data];
+  //         newArr[idx].likes++;
+  //         newArr[idx].likeStatus = !newArr[idx].likeStatus;
+  //         setData(newArr);
+  //       });
+  //   }
+  // };
 
   const fetchData = async () => {
     setIsLoading(true);

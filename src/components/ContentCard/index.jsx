@@ -51,37 +51,22 @@ const ContentCard = ({
   userId,
   userPhotoProfile,
   post_comments,
+  addLike,
+  removeLike,
 }) => {
-  const [comment, setcomment] = useState(post_comments);
-  const [locationInput, setLocationInput] = useState(location);
-  const [captionInput, setCaptionInput] = useState(caption);
+  // const [comment, setcomment] = useState(post_comments || []);
+  // const [locationInput, setLocationInput] = useState(location);
+  // const [captionInput, setCaptionInput] = useState(caption);
 
   const [displayCommentInput, setDisplayCommentInput] = useState(false);
+  const [like_status, setLikeStatus] = useState(likeStatus);
 
   const userSelector = useSelector((state) => state.user);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    // console.log(Comments);
-    // fetchComments();
-  }, []);
-
-  // const fetchComments = () => {
-  //   axiosInstance
-  //     .get(`/comments`, {
-  //       params: {
-  //         postId: id,
-  //         _expand: "user",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       setcomments(res.data);
-  //     });
-  // };
-
   const renderComments = () => {
-    return comment.map((val) => {
+    return post_comments.map((val) => {
       return <Comments username={val?.user?.username} content={val.comment} />;
     });
   };
@@ -256,10 +241,13 @@ const ContentCard = ({
         />
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex">
-            {likeStatus ? (
+            {like_status ? (
               <Icon
                 as={AiFillHeart}
-                onClick={likeStatusFnOnclick}
+                onClick={() => {
+                  removeLike();
+                  setLikeStatus(false);
+                }}
                 color="red"
                 boxSize={8}
                 mt={3}
@@ -269,7 +257,10 @@ const ContentCard = ({
             ) : (
               <Icon
                 as={AiOutlineHeart}
-                onClick={likeStatusFnOnclick}
+                onClick={() => {
+                  addLike();
+                  setLikeStatus(true);
+                }}
                 color="black"
                 boxSize={8}
                 mt={3}
@@ -295,7 +286,7 @@ const ContentCard = ({
           </Text>
         </Box>
         <Text ps={4} pt={3} fontSize="sm">
-          {likes} Likes
+          {likes.toLocaleString()} Likes
         </Text>
         <Box>
           <Text fontSize="md" px={4} py={1}>
