@@ -45,8 +45,6 @@ const ContentCard = ({
   likeStatus,
   imgUrl,
   deleteDataFn,
-  likeStatusFnOnclick,
-  likeStatusFnDblclick,
   id,
   userId,
   userPhotoProfile,
@@ -234,7 +232,10 @@ const ContentCard = ({
           </div>
         </Box>
         <Image
-          onDoubleClick={likeStatusFnDblclick}
+          onDoubleClick={() => {
+            addLike();
+            setLikeStatus(true);
+          }}
           src={imgUrl}
           alt="View"
           objectFit="inherit"

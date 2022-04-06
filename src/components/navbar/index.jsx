@@ -43,7 +43,7 @@ import * as yup from "yup";
 const Navbar = () => {
   const [locationInput, setLocationInput] = useState("");
   const [captionInput, setCaptionInput] = useState("");
-  // const [imgUrlInput, setImgUrlInput] = useState("");
+  const [imgUrlInput, setImgUrlInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
   const userSelector = useSelector((state) => state.user);
@@ -112,7 +112,7 @@ const Navbar = () => {
 
   const handleFile = (event) => {
     setSelectedFile(event.target.files[0]);
-    alert(event?.target?.files[0]?.name);
+    setImgUrlInput(event?.target?.files[0]?.name);
   };
 
   return (
@@ -201,7 +201,7 @@ const Navbar = () => {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel htmlFor="imageInput">Image URL</FormLabel>
+                  <FormLabel htmlFor="imageInput">Image</FormLabel>
                   <Input
                     onChange={handleFile}
                     ref={inputFileRef}
@@ -210,6 +210,7 @@ const Navbar = () => {
                     type="file"
                     display="none"
                   />
+                  <Text my={2}>{imgUrlInput}</Text>
                   <Button
                     onClick={() => inputFileRef.current.click()}
                     colorScheme="facebook"
@@ -219,7 +220,17 @@ const Navbar = () => {
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button variant="outline" me={2} onClick={onClose}>
+                <Button
+                  variant="outline"
+                  me={2}
+                  onClick={() => {
+                    onClose();
+                    setSelectedFile("");
+                    setImgUrlInput("");
+                    formik.setFieldValue("caption", "");
+                    formik.setFieldValue("location", "");
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button colorScheme="teal" onClick={uploadContentHandler}>

@@ -1,73 +1,36 @@
 import { Box, Center, useToast, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { axiosInstance } from "../config/api";
+import axiosInstance from "../config/api";
 import Feeds from "../components/userFeed";
 import Link from "next/link";
 import UserProfile from "../components/userProfile";
 import requiresAuth from "../config/requireAuth";
+import axios from "axios";
+import jsonwebtoken from "jsonwebtoken";
 
 // ini untuk page sendiri
 // klo ad perubahan profile, setelah oatch, harus update reduxnya
 
 const MyProfilePage = ({ userData }) => {
-  // const [userData, setUserData] = useState({});
-  const [userPosts, setuserPosts] = useState([]);
-  const [dataLength, setDataLength] = useState(0);
+  // const [userData, setUserData] = useState(userData);
+  const [userPosts, setuserPosts] = useState(userData.user_posts);
+  const [dataLength, setDataLength] = useState(userData.user_posts.length);
   const [isLoading, setIsLoading] = useState(false);
 
   const Toast = useToast();
   const userSelector = useSelector((state) => state.user);
 
-  // const fetchUserData = () => {
-  //   axiosInstance
-  //     .get("/users", {
-  //       params: {
-  //         username: userSelector.username,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const userInfo = res.data[0];
-  //       console.log(userInfo);
-  //       setUserData(userInfo);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  const fetchUserPost = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      axiosInstance
-        .get("/contents", {
-          params: {
-            _expand: "user",
-            userId: userData.id,
-          },
-        })
-        .then((res) => {
-          // console.log(res.data);
-          setuserPosts(res.data);
-          setDataLength(res.data.length);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, 2000);
-  };
-
   useEffect(() => {
     // fetchUserData();
     console.log(userData.id);
     // console.log(userSelector.bio);
-    fetchUserPost();
-  }, [userSelector.bio]);
+    // fetchUserPost();
+  }, []);
 
   const renderPost = () => {
     return userPosts.map((val) => {
-      return <Feeds imgUrl={val.imgUrl} id={val.id} />;
+      return <Feeds imgUrl={val.image_url} id={val.id} />;
     });
   };
 
@@ -95,13 +58,20 @@ const MyProfilePage = ({ userData }) => {
   );
 };
 
-export const getServerSideProps = requiresAuth((context) => {
-  const userData = context.req.cookies.user_data;
-  const parsedUserData = JSON.parse(userData);
+export const getServerSideProps = requiresAuth(async (context) => {
+  const token = context.req.cookies.auth_token;
+
+  const res = await axios.get(`http://localhost:2000/user/my-profile`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  const data = res.data.profile;
 
   return {
     props: {
-      userData: parsedUserData,
+      userData: data,
     },
   };
 });

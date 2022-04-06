@@ -66,7 +66,7 @@ const LoginForm = () => {
           email: userLogin.email,
           id: userLogin.id,
           bio: userLogin.bio,
-          avatar_url: userLogin.avatar_url,
+          avatar_url: userLogin.avatar_img,
         },
       });
 

@@ -17,30 +17,31 @@ import {
   useDisclosure,
   Button,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineEdit } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { axiosInstance } from "../../config/api";
-import { useState } from "react";
+import axiosInstance from "../../config/api";
+import { useRef, useState } from "react";
+import user_types from "../../redux/reducers/user/types";
 
 const UserProfile = (props) => {
-  // const [fullName, setFullName] = useState(userSelector.full_name);
-  // const [bio, setBio] = useState(userSelector.bio);
-  // const [username, setUsername] = useState(userSelector.username);
-  // const [avatarUrl, setAvatarUrl] = useState(userSelector.avatar_url);
   const userSelector = useSelector((state) => state.user);
-  const dispatch = useDispatch(); // TODO: change the redux after the profile change
+  const [imgUrlInput, setImgUrlInput] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const inputFileRef = useRef(null);
+  const Toast = useToast();
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
       full_name: userSelector.full_name,
       username: userSelector.username,
       bio: userSelector.bio,
-      avatar_url: userSelector.avatar_url,
     },
     validationSchema: yup.object().shape({
       full_name: yup
@@ -58,38 +59,70 @@ const UserProfile = (props) => {
         .min(1, "bio must be at least 1 character")
         .max(150, "bio must not exceed 150 characters"),
     }),
-    onSubmit: async (values) => {
-      try {
-        const editProfile = {
-          username: values.username,
-          full_name: values.full_name,
-          bio: values.bio,
-          avatar_url: values.avatar_url,
-        };
-
-        await axiosInstance.patch(`/users/${userSelector.id}`, editProfile);
-
-        // dispatch redux
-
-        onClose();
-      } catch (error) {
-        console.log(error.message);
-      }
-    },
   });
 
-  // const inputHandler = (field, e) => {
-  //   const { value } = e.target;
-  //   if (field === "username") {
-  //     setUsername(value);
-  //   } else if (field === "fullName") {
-  //     setFullName(value);
-  //   } else if (field === "bio") {
-  //     setBio(value);
-  //   } else if (field === "avatarUrl") {
-  //     setAvatarUrl(value);
-  //   }
-  // };
+  const handleFile = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setImgUrlInput(event?.target?.files[0]?.name);
+  };
+
+  const refreshPage = () => {
+    window.location.reload(false);
+  };
+
+  const uploadContentHandler = async () => {
+    const formData = new FormData();
+    const { full_name, bio, username } = formik.values;
+
+    formData.append("full_name", full_name);
+    formData.append("bio", bio);
+    username == userSelector.username
+      ? undefined
+      : formData.append("username", username);
+    formData.append("avatar_image_file", selectedFile);
+
+    try {
+      await axiosInstance.patch(`/user/${userSelector.id}`, formData);
+      formik.setFieldValue("full_name", userSelector.full_name);
+      formik.setFieldValue("bio", userSelector.bio);
+      formik.setFieldValue("username", userSelector.username);
+
+      const res = await axiosInstance.get("/user", {
+        params: {
+          user_id: userSelector.id,
+        },
+      });
+
+      const userLogin = res.data.profile;
+      console.log(userLogin.avatar_img);
+
+      dispatch({
+        type: user_types.LOGIN_USER,
+        payload: {
+          username: userLogin.username,
+          full_name: userLogin.full_name,
+          email: userLogin.email,
+          id: userLogin.id,
+          bio: userLogin.bio,
+          avatar_url: userLogin.avatar_img,
+        },
+      });
+
+      onClose();
+
+      refreshPage();
+    } catch (err) {
+      console.log(err);
+      Toast({
+        title: "Fetch Data Failed",
+        description: err.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
 
   return (
     // <Center>
@@ -158,21 +191,38 @@ const UserProfile = (props) => {
                     <FormLabel htmlFor="profilePictureEdit">
                       Profile Picture Url
                     </FormLabel>
+                    <Text my={2}>{imgUrlInput}</Text>
                     <Input
-                      onChange={(e) => {
-                        formik.setFieldValue("avatar_url", e.target.value);
-                      }}
+                      onChange={handleFile}
+                      ref={inputFileRef}
                       id="profilePictureEdit"
-                      type="text"
-                      value={formik.values.avatar_url}
+                      type="file"
+                      display="none"
                     />
+                    <Button
+                      onClick={() => inputFileRef.current.click()}
+                      colorScheme="teal"
+                    >
+                      Choose File
+                    </Button>
                   </FormControl>
                 </ModalBody>
                 <ModalFooter>
-                  <Button variant="outline" me={2} onClick={onClose}>
+                  <Button
+                    variant="outline"
+                    me={2}
+                    onClick={() => {
+                      onClose();
+                      setSelectedFile("");
+                      setImgUrlInput("");
+                      formik.setFieldValue("full_name", userSelector.full_name);
+                      formik.setFieldValue("bio", userSelector.bio);
+                      formik.setFieldValue("username", userSelector.username);
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={formik.handleSubmit} colorScheme="teal">
+                  <Button onClick={uploadContentHandler} colorScheme="teal">
                     Save
                   </Button>
                 </ModalFooter>
