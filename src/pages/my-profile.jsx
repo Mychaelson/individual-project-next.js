@@ -21,12 +21,7 @@ const MyProfilePage = ({ userData }) => {
   const Toast = useToast();
   const userSelector = useSelector((state) => state.user);
 
-  useEffect(() => {
-    // fetchUserData();
-    console.log(userData.id);
-    // console.log(userSelector.bio);
-    // fetchUserPost();
-  }, []);
+  useEffect(() => {}, []);
 
   const renderPost = () => {
     return userPosts.map((val) => {
@@ -47,6 +42,7 @@ const MyProfilePage = ({ userData }) => {
               posting={dataLength}
               avatarUrl={userSelector.avatar_url}
               id={userSelector.id}
+              userData={userData}
             />
           )}
           <Box ms={4} mt={4} display="flex" flexWrap="wrap">

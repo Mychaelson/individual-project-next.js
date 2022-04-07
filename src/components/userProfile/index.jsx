@@ -18,30 +18,34 @@ import {
   Button,
   Textarea,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineEdit } from "react-icons/ai";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axiosInstance from "../../config/api";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import user_types from "../../redux/reducers/user/types";
 
 const UserProfile = (props) => {
   const userSelector = useSelector((state) => state.user);
   const [imgUrlInput, setImgUrlInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const inputFileRef = useRef(null);
   const Toast = useToast();
   const dispatch = useDispatch();
 
+  // console.log(props.userData);
+
   const formik = useFormik({
     initialValues: {
-      full_name: userSelector.full_name,
-      username: userSelector.username,
-      bio: userSelector.bio,
+      full_name: props.userData?.full_name,
+      username: props.userData?.username,
+      bio: props.userData?.bio,
     },
     validationSchema: yup.object().shape({
       full_name: yup
@@ -66,11 +70,7 @@ const UserProfile = (props) => {
     setImgUrlInput(event?.target?.files[0]?.name);
   };
 
-  const refreshPage = () => {
-    window.location.reload(false);
-  };
-
-  const uploadContentHandler = async () => {
+  const editProfileHandler = async () => {
     const formData = new FormData();
     const { full_name, bio, username } = formik.values;
 
@@ -83,9 +83,8 @@ const UserProfile = (props) => {
 
     try {
       await axiosInstance.patch(`/user/${userSelector.id}`, formData);
-      formik.setFieldValue("full_name", userSelector.full_name);
-      formik.setFieldValue("bio", userSelector.bio);
-      formik.setFieldValue("username", userSelector.username);
+      setImgUrlInput("");
+      setSelectedFile(null);
 
       const res = await axiosInstance.get("/user", {
         params: {
@@ -94,7 +93,7 @@ const UserProfile = (props) => {
       });
 
       const userLogin = res.data.profile;
-      console.log(userLogin.avatar_img);
+      // console.log(userLogin.avatar_img);
 
       dispatch({
         type: user_types.LOGIN_USER,
@@ -110,7 +109,7 @@ const UserProfile = (props) => {
 
       onClose();
 
-      refreshPage();
+      // refreshPage();
     } catch (err) {
       console.log(err);
       Toast({
@@ -123,6 +122,19 @@ const UserProfile = (props) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreview(undefined);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreview(objectUrl);
+
+    // free memory when ever this component is unmounted
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
 
   return (
     // <Center>
@@ -189,9 +201,14 @@ const UserProfile = (props) => {
                   </FormControl>
                   <FormControl>
                     <FormLabel htmlFor="profilePictureEdit">
-                      Profile Picture Url
+                      Profile Picture
                     </FormLabel>
                     <Text my={2}>{imgUrlInput}</Text>
+                    {preview ? (
+                      <Box boxSize="sm">
+                        {selectedFile && <Image src={preview} />}
+                      </Box>
+                    ) : undefined}
                     <Input
                       onChange={handleFile}
                       ref={inputFileRef}
@@ -213,16 +230,13 @@ const UserProfile = (props) => {
                     me={2}
                     onClick={() => {
                       onClose();
-                      setSelectedFile("");
+                      setSelectedFile(null);
                       setImgUrlInput("");
-                      formik.setFieldValue("full_name", userSelector.full_name);
-                      formik.setFieldValue("bio", userSelector.bio);
-                      formik.setFieldValue("username", userSelector.username);
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={uploadContentHandler} colorScheme="teal">
+                  <Button onClick={editProfileHandler} colorScheme="teal">
                     Save
                   </Button>
                 </ModalFooter>

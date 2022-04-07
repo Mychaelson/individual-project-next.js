@@ -21,6 +21,10 @@ const ContentDetail = ({ detailPostData }) => {
     fetchComments();
   }, []);
 
+  const refreshPage = () => {
+    window.location.reload(false);
+  };
+
   const fetchComments = async () => {
     try {
       const commentResult = await axiosInstance.get("/comment", {
@@ -32,14 +36,14 @@ const ContentDetail = ({ detailPostData }) => {
       setComment(commentResult.data.result.rows);
     } catch (err) {
       console.log(err);
-      Toast({
-        title: "Fetch Data Failed",
-        description: err.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      // Toast({
+      //   title: "Fetch Data Failed",
+      //   description: err.response.data.message,
+      //   status: "info",
+      //   duration: 5000,
+      //   isClosable: true,
+      //   position: "top",
+      // });
     }
   };
 

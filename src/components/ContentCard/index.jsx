@@ -121,6 +121,7 @@ const ContentCard = ({
         await axiosInstance.patch(`/post/${id}`, editPost);
 
         onClose();
+        refreshPage();
       } catch (err) {
         console.log(err);
       }

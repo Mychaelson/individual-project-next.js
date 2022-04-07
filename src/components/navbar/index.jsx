@@ -23,8 +23,9 @@ import {
   FormControl,
   FormLabel,
   Textarea,
+  Image,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
 import { BiLogOut, BiHomeSmile, BiLogIn } from "react-icons/bi";
@@ -45,6 +46,7 @@ const Navbar = () => {
   const [captionInput, setCaptionInput] = useState("");
   const [imgUrlInput, setImgUrlInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState();
 
   const userSelector = useSelector((state) => state.user);
 
@@ -97,6 +99,7 @@ const Navbar = () => {
     try {
       await axiosInstance.post("/post", formData);
       setSelectedFile(null);
+      setImgUrlInput("");
       formik.setFieldValue("caption", "");
       formik.setFieldValue("location", "");
 
@@ -114,6 +117,19 @@ const Navbar = () => {
     setSelectedFile(event.target.files[0]);
     setImgUrlInput(event?.target?.files[0]?.name);
   };
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreview(undefined);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreview(objectUrl);
+
+    // free memory when ever this component is unmounted
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
 
   return (
     <Box
@@ -211,6 +227,11 @@ const Navbar = () => {
                     display="none"
                   />
                   <Text my={2}>{imgUrlInput}</Text>
+                  {preview ? (
+                    <Box boxSize="sm">
+                      {selectedFile && <Image src={preview} />}
+                    </Box>
+                  ) : undefined}
                   <Button
                     onClick={() => inputFileRef.current.click()}
                     colorScheme="facebook"
@@ -225,7 +246,7 @@ const Navbar = () => {
                   me={2}
                   onClick={() => {
                     onClose();
-                    setSelectedFile("");
+                    setSelectedFile(null);
                     setImgUrlInput("");
                     formik.setFieldValue("caption", "");
                     formik.setFieldValue("location", "");
