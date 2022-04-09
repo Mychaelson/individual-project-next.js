@@ -19,6 +19,8 @@ import {
   Textarea,
   useToast,
   Image,
+  Stack,
+  Badge,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -148,17 +150,24 @@ const UserProfile = (props) => {
           my={4}
         />
         <Box>
-          <Text fontWeight="bold" mb={2} fontSize="3xl">
-            {props.fullName}{" "}
-            {props.id === userSelector.id ? (
-              <Icon
-                onClick={onOpen}
-                as={AiOutlineEdit}
-                boxSize={5}
-                className="click"
-              />
-            ) : null}
-          </Text>
+          <Stack direction={"row"}>
+            <Text fontWeight="bold" mb={2} fontSize="3xl">
+              {props.fullName}{" "}
+              {props.is_verify ? (
+                <Badge colorScheme="green">verified</Badge>
+              ) : (
+                <Badge colorScheme="gray">not verified</Badge>
+              )}
+              {props.id === userSelector.id ? (
+                <Icon
+                  onClick={onOpen}
+                  as={AiOutlineEdit}
+                  boxSize={5}
+                  className="click"
+                />
+              ) : null}
+            </Text>
+          </Stack>
 
           <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay>
@@ -223,6 +232,9 @@ const UserProfile = (props) => {
                       Choose File
                     </Button>
                   </FormControl>
+                  {userSelector.is_verify ? null : (
+                    <Button mt={4}>Verify Your Account</Button>
+                  )}
                 </ModalBody>
                 <ModalFooter>
                   <Button

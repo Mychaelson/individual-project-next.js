@@ -7,6 +7,7 @@ const initital_value = {
   id: 0,
   bio: "",
   avatar_url: "",
+  is_verify: "",
 };
 
 const UserReducer = (state = initital_value, action) => {
@@ -19,6 +20,7 @@ const UserReducer = (state = initital_value, action) => {
       id: action?.payload?.id,
       bio: action?.payload?.bio,
       avatar_url: action?.payload?.avatar_url,
+      is_verify: action?.payload?.is_verify,
     };
   } else if (action.type === user_types.LOGOUT_USER) {
     return initital_value;

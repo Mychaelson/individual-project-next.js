@@ -3,7 +3,6 @@ import user_types from "../redux/reducers/user/types";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Box, Text } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import axiosInstance from "../config/api";
 
@@ -32,6 +31,7 @@ const AuthProvider = ({ children }) => {
             id: userLogin.id,
             bio: userLogin.bio,
             avatar_url: userLogin.avatar_img,
+            is_verify: userLogin.is_verified,
           },
         });
       } catch (err) {

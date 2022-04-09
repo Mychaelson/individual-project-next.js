@@ -20,7 +20,6 @@ import axiosInstance from "../../config/api";
 import { useDispatch, useSelector } from "react-redux";
 import user_types from "../../redux/reducers/user/types";
 import Link from "next/link";
-import Navbar from "../navbar";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
@@ -67,6 +66,7 @@ const LoginForm = () => {
           id: userLogin.id,
           bio: userLogin.bio,
           avatar_url: userLogin.avatar_img,
+          is_verify: userLogin.is_verified,
         },
       });
 

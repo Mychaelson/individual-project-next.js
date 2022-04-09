@@ -43,6 +43,7 @@ const MyProfilePage = ({ userData }) => {
               avatarUrl={userSelector.avatar_url}
               id={userSelector.id}
               userData={userData}
+              is_verify={userSelector.is_verify}
             />
           )}
           <Box ms={4} mt={4} display="flex" flexWrap="wrap">
