@@ -125,6 +125,30 @@ const UserProfile = (props) => {
     }
   };
 
+  const resendVerificationButtonHandler = async () => {
+    try {
+      await axiosInstance.post("/auth/resend-verification");
+      Toast({
+        title: "Resend Verification Success",
+        description: "Email has been sent",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    } catch (err) {
+      console.log(err);
+      Toast({
+        title: "Resend Verification Failed",
+        description: err.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
+
   useEffect(() => {
     if (!selectedFile) {
       setPreview(undefined);
@@ -233,7 +257,14 @@ const UserProfile = (props) => {
                     </Button>
                   </FormControl>
                   {userSelector.is_verify ? null : (
-                    <Button mt={4}>Verify Your Account</Button>
+                    <Button
+                      onClick={() => {
+                        resendVerificationButtonHandler(), onClose();
+                      }}
+                      mt={4}
+                    >
+                      Verify Your Account
+                    </Button>
                   )}
                 </ModalBody>
                 <ModalFooter>
