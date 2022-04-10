@@ -14,7 +14,7 @@ const Login = () => {
     if (authSelector.id) {
       router.push("/home-page");
     }
-  }, []);
+  }, [authSelector.id]);
 
   return (
     <Box display="flex" width="100%">

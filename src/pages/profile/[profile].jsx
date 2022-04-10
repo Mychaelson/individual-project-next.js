@@ -49,8 +49,6 @@ const ProfilePage = () => {
     }
   }, [router.isReady]);
 
-  console.log(dataUser);
-
   const renderData = () => {
     return data.map((val) => {
       return (

@@ -293,7 +293,10 @@ const ContentCard = ({
         <Box>
           <Text fontSize="md" px={4} py={1}>
             <span className="font-bold">{username}</span>{" "}
-            <span className="font-light"> - {caption} </span>
+            <span className="font-light">
+              {" "}
+              {caption ? "-" : undefined} {caption}{" "}
+            </span>
           </Text>
         </Box>
         <Box paddingX="4" marginBottom={4}>

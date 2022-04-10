@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Heading,
@@ -97,48 +97,55 @@ const LoginForm = () => {
         ps="10"
         paddingEnd="10"
       >
-        <Heading size="lg">Sign in to your account</Heading>
-        <Box mt={5}>
-          <FormControl>
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <Input
-              onChange={(e) => {
-                inputHandler(e, "username");
-              }}
-              id="username"
-              type="text"
-            />
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <InputGroup>
+        <form>
+          <Heading size="lg">Sign in to your account</Heading>
+          <Box mt={5}>
+            <FormControl>
+              <FormLabel htmlFor="username">Username</FormLabel>
               <Input
                 onChange={(e) => {
-                  inputHandler(e, "password");
+                  inputHandler(e, "username");
                 }}
-                id="password"
-                type={show ? "text" : "password"}
+                id="username"
+                type="text"
               />
-              <InputRightElement>
-                <Icon
-                  as={show ? AiOutlineEyeInvisible : AiOutlineEye}
-                  onClick={() => showPass()}
-                  className="click"
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <InputGroup>
+                <Input
+                  onChange={(e) => {
+                    inputHandler(e, "password");
+                  }}
+                  id="password"
+                  type={show ? "text" : "password"}
                 />
-              </InputRightElement>
-            </InputGroup>
-            <FormHelperText>We'll never share your data.</FormHelperText>
-          </FormControl>
-        </Box>
-        <Text mt={1} fontSize="smaller" color="#3b5cd4">
-          <UILink>Forgot Password?</UILink>
-        </Text>
-        <Link href="/register">
+                <InputRightElement>
+                  <Icon
+                    as={show ? AiOutlineEyeInvisible : AiOutlineEye}
+                    onClick={() => showPass()}
+                    className="click"
+                  />
+                </InputRightElement>
+              </InputGroup>
+              <FormHelperText>We'll never share your data.</FormHelperText>
+            </FormControl>
+          </Box>
           <Text mt={1} fontSize="smaller" color="#3b5cd4">
-            <UILink>Have not register?</UILink>
+            <UILink>Forgot Password?</UILink>
           </Text>
-        </Link>
-        <Button onClick={loginButtonHandler} mt={5} colorScheme="teal">
-          Sign in
-        </Button>
+          <Link href="/register">
+            <Text mt={1} fontSize="smaller" color="#3b5cd4">
+              <UILink>Have not register?</UILink>
+            </Text>
+          </Link>
+          <Button
+            type="submit"
+            onClick={loginButtonHandler}
+            mt={5}
+            colorScheme="teal"
+          >
+            Sign in
+          </Button>
+        </form>
       </Box>
     </>
   );
