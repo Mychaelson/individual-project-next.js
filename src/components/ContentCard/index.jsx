@@ -51,6 +51,9 @@ const ContentCard = ({
   post_comments,
   addLike,
   removeLike,
+  seeMoreCommentButtonHandler,
+  commentPage,
+  numberOfPageForComment,
 }) => {
   // const [comment, setcomment] = useState(post_comments || []);
   // const [locationInput, setLocationInput] = useState(location);
@@ -97,7 +100,7 @@ const ContentCard = ({
       comment: Yup.string()
         .required("Comment cannot be empty")
         .min(1, "Minimum 1 character")
-        .max(50, "maximum 50 characters"),
+        .max(300, "maximum 300 characters"),
     }),
   });
 
@@ -304,6 +307,11 @@ const ContentCard = ({
             Comments
           </Text>
           {renderComments()}
+          {commentPage <= numberOfPageForComment ? (
+            <Text color="gray.500" onClick={seeMoreCommentButtonHandler}>
+              See More Comments
+            </Text>
+          ) : undefined}
           {displayCommentInput ? (
             <Box display="flex" alignItems="center" mt={2}>
               {/* <Form> */}

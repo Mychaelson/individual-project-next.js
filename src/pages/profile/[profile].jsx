@@ -51,11 +51,8 @@ const ProfilePage = () => {
 
   const renderData = () => {
     return data.map((val) => {
-      return (
-        <Link href={`/content-detail/${val.id}`}>
-          <Feeds imgUrl={val.image_url} />
-        </Link>
-      );
+      console.log(val.id, "eeeee");
+      return <Feeds id={val.id} imgUrl={val.image_url} />;
     });
   };
 

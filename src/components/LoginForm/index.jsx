@@ -48,7 +48,8 @@ const LoginForm = () => {
     }
   };
 
-  const loginButtonHandler = async () => {
+  const loginButtonHandler = async (e) => {
+    e.preventDefault();
     try {
       const res = await axiosInstance.post("/auth/login", {
         username: usernameInput,
@@ -74,7 +75,7 @@ const LoginForm = () => {
 
       router.push("/home-page");
     } catch (err) {
-      console.log(err.response);
+      console.log(err);
       toast({
         title: "login failed",
         description: err.response.data.message,
@@ -97,7 +98,7 @@ const LoginForm = () => {
         ps="10"
         paddingEnd="10"
       >
-        <form>
+        <form onSubmit={loginButtonHandler}>
           <Heading size="lg">Sign in to your account</Heading>
           <Box mt={5}>
             <FormControl>
