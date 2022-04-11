@@ -22,6 +22,7 @@ import {
   FormControl,
   FormLabel,
   Textarea,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";

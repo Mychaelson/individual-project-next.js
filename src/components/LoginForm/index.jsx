@@ -130,9 +130,11 @@ const LoginForm = () => {
               <FormHelperText>We'll never share your data.</FormHelperText>
             </FormControl>
           </Box>
-          <Text mt={1} fontSize="smaller" color="#3b5cd4">
-            <UILink>Forgot Password?</UILink>
-          </Text>
+          <Link href="/forgot-password">
+            <Text mt={1} fontSize="smaller" color="#3b5cd4">
+              <UILink>Forgot Password?</UILink>
+            </Text>
+          </Link>
           <Link href="/register">
             <Text mt={1} fontSize="smaller" color="#3b5cd4">
               <UILink>Have not register?</UILink>

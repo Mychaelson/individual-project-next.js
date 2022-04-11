@@ -16,6 +16,7 @@ import axiosInstance from "../config/api";
 import Navbar from "../components/navbar";
 import Page from "../components/Page";
 import { useSelector } from "react-redux";
+import requiresAuth from "../config/requireAuth";
 
 function HomePage() {
   const [data, setData] = useState([]);
@@ -134,5 +135,11 @@ function HomePage() {
     </Page>
   );
 }
+
+export const getServerSideProps = requiresAuth((context) => {
+  return {
+    props: {},
+  };
+});
 
 export default HomePage;
