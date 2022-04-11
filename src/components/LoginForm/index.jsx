@@ -52,7 +52,7 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const res = await axiosInstance.post("/auth/login", {
-        username: usernameInput,
+        credential: usernameInput,
         password: passwordInput,
       });
 
