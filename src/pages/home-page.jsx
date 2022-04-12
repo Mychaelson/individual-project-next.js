@@ -17,10 +17,12 @@ import Navbar from "../components/navbar";
 import Page from "../components/Page";
 import { useSelector } from "react-redux";
 import requiresAuth from "../config/requireAuth";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 function HomePage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const userSelector = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -92,8 +94,8 @@ function HomePage() {
     try {
       const res = await axiosInstance.get("/post", {
         params: {
-          _limit: 10,
-          _page: 1,
+          _limit: 5,
+          _page: page,
           _sortBy: "createdAt",
           _sortDir: "DESC",
         },
@@ -101,18 +103,12 @@ function HomePage() {
 
       const allPost = res.data.result.rows;
 
-      setData(allPost);
+      setData([...data, ...allPost]);
       setIsLoading(false);
+      setPage(page + 1);
     } catch (err) {
       setIsLoading(false);
-      Toast({
-        title: "Fetch Data Failed",
-        description: err.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      console.log(err.response.data.message);
     }
   };
 
@@ -130,7 +126,14 @@ function HomePage() {
     <Page>
       <Box mt={3}>
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
-        {renderData()}
+        <InfiniteScroll
+          dataLength={data.length}
+          next={fetchData}
+          hasMore={true}
+          loader={<Spinner size="lg" />}
+        >
+          {renderData()}
+        </InfiniteScroll>
       </Box>
     </Page>
   );
