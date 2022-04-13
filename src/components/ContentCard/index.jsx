@@ -140,6 +140,12 @@ const ContentCard = ({
     profileRedirect = `/profile/${userId}`;
   }
 
+  const deletePostButtonHandler = () => {
+    deleteDataFn();
+
+    refreshPage();
+  };
+
   return (
     <Center>
       <Box
@@ -191,7 +197,9 @@ const ContentCard = ({
                 {userId === userSelector.id ? (
                   <>
                     <MenuItem onClick={onOpen}>Edit Post</MenuItem>
-                    <MenuItem onClick={deleteDataFn}>Delete</MenuItem>
+                    <MenuItem onClick={deletePostButtonHandler}>
+                      Delete
+                    </MenuItem>
                   </>
                 ) : null}
               </MenuList>

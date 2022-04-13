@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
 
         Cookies.set("auth_token", userResponse?.data?.result?.token || "");
 
-        const userLogin = userResponse.data.result.user;
+        const userLogin = userResponse.data.result.User;
 
         dispatch({
           type: user_types.LOGIN_USER,
