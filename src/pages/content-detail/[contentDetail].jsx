@@ -171,13 +171,6 @@ const ContentDetail = ({ detailPostData }) => {
             <TwitterShareButton title={``} url={`${WEB_URL}${router.asPath}`}>
               <TwitterIcon size={40} round />
             </TwitterShareButton>
-            {/* <LinkedinShareButton
-              url={`${WEB_URL}${router.asPath}`}
-              title={`Beli  sekarang juga!`}
-              // summary={productDetailData.description}
-            >
-              <LinkedinIcon size={40} round />
-            </LinkedinShareButton> */}
             <WhatsappShareButton
               url={`${WEB_URL}${router.asPath}`}
               title={``}
