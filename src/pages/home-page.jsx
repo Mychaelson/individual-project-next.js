@@ -8,6 +8,7 @@ import {
   Button,
   Center,
   Spinner,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
@@ -23,11 +24,12 @@ function HomePage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [dataLength, setDataLength] = useState(0);
   const userSelector = useSelector((state) => state.user);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page]);
 
   const Toast = useToast();
 
@@ -89,12 +91,14 @@ function HomePage() {
     }
   };
 
+  const maxPostPerPage = 5;
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const res = await axiosInstance.get("/post", {
         params: {
-          _limit: 5,
+          _limit: maxPostPerPage,
           _page: page,
           _sortBy: "createdAt",
           _sortDir: "DESC",
@@ -105,10 +109,16 @@ function HomePage() {
 
       setData([...data, ...allPost]);
       setIsLoading(false);
-      setPage(page + 1);
+      setDataLength(res.data.result.count);
     } catch (err) {
       setIsLoading(false);
       console.log(err.response.data.message);
+    }
+  };
+
+  const fecthNextPage = () => {
+    if (page < Math.ceil(dataLength / maxPostPerPage)) {
+      setPage(page + 1);
     }
   };
 
@@ -128,9 +138,14 @@ function HomePage() {
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
         <InfiniteScroll
           dataLength={data.length}
-          next={fetchData}
-          hasMore={true}
+          next={fecthNextPage}
+          hasMore={page < Math.ceil(dataLength / maxPostPerPage)}
           loader={<Spinner size="lg" />}
+          endMessage={
+            <Center>
+              <Text>No more post available</Text>
+            </Center>
+          }
         >
           {renderData()}
         </InfiniteScroll>

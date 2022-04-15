@@ -1,15 +1,34 @@
 import Head from "next/head";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import user_types from "../redux/reducers/user/types";
-import { Box, Text } from "@chakra-ui/react";
 
-const Page = ({ children }) => {
+const Page = ({ children, title, description, url, image, type }) => {
   // ini nanti buat meta tag
   return (
     <>
       <Head>
-        <title></title>
+        <title>{title || "Default Title"}</title>
+        <meta
+          name="description"
+          content={description || "Default description"}
+        />
+
+        <meta property="og:url" content={url || "http://localhost:3000"} />
+        <meta property="og:type" content={type || "website"} />
+        <meta property="og:title" content={title || "Default Title"} />
+        <meta
+          property="og:description"
+          content={description || "Default description"}
+        />
+        <meta property="og:image" content={image || "image url default"} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content={"http://localhost:3000"} />
+        <meta property="twitter:url" content={url || "http://localhost:3000"} />
+        <meta name="twitter:title" content={title || "Default Title"} />
+        <meta
+          name="twitter:description"
+          content={description || "Default description"}
+        />
+        <meta name="twitter:image" content={image || "image url default"} />
       </Head>
       {children}
     </>

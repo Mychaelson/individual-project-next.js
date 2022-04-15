@@ -1,14 +1,30 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
 import ContentCard from "../../components/ContentCard";
-import { Spinner, Center, useToast } from "@chakra-ui/react";
+import {
+  Spinner,
+  Center,
+  useToast,
+  Stack,
+  IconButton,
+  Box,
+  Text,
+  Icon,
+} from "@chakra-ui/react";
 import axiosInstance from "../../config/api";
 import Page from "../../components/Page";
 import { useRouter } from "next/router";
 import requiresAuth from "../../config/requireAuth";
-
-let post_id;
+import { WEB_URL } from "../../config/url";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
+import { BiCopy } from "react-icons/bi";
 
 const ContentDetail = ({ detailPostData }) => {
   const [data, setData] = useState(detailPostData);
@@ -23,10 +39,6 @@ const ContentDetail = ({ detailPostData }) => {
     fetchComments();
   }, []);
 
-  const refreshPage = () => {
-    window.location.reload(false);
-  };
-
   const maxCommentPerPost = 5;
 
   const fetchComments = async () => {
@@ -39,8 +51,6 @@ const ContentDetail = ({ detailPostData }) => {
         },
       });
 
-      // let comments = [...comment];
-      // comments = comments.concat(commentResult.data.result.rows);
       setComment((prevComments) => [
         ...prevComments,
         ...commentResult.data.result.rows,
@@ -103,8 +113,23 @@ const ContentDetail = ({ detailPostData }) => {
     like_status = false;
   }
 
+  const copyLinkBtnHandler = () => {
+    navigator.clipboard.writeText(`${WEB_URL}${router.asPath}`);
+
+    Toast({
+      position: "top-right",
+      status: "info",
+      title: "Link copied",
+    });
+  };
+
   return (
-    <Page>
+    <Page
+      title={`${data?.caption}`}
+      description={`${data?.user_posts?.username} || ${data?.caption}`}
+      image={data?.image_url}
+      url={`${WEB_URL}${router.asPath}`}
+    >
       <div className="mt-3">
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
         {/* {renderData()} */}
@@ -136,6 +161,38 @@ const ContentDetail = ({ detailPostData }) => {
           />
         )}
       </div>
+      <Center>
+        <Box mb={4}>
+          <Text fontWeight="medium">Share this to your friends!</Text>
+          <Stack mt={2} direction="row">
+            <FacebookShareButton url={`${WEB_URL}${router.asPath}`} quote={``}>
+              <FacebookIcon size={40} round />
+            </FacebookShareButton>
+            <TwitterShareButton title={``} url={`${WEB_URL}${router.asPath}`}>
+              <TwitterIcon size={40} round />
+            </TwitterShareButton>
+            {/* <LinkedinShareButton
+              url={`${WEB_URL}${router.asPath}`}
+              title={`Beli  sekarang juga!`}
+              // summary={productDetailData.description}
+            >
+              <LinkedinIcon size={40} round />
+            </LinkedinShareButton> */}
+            <WhatsappShareButton
+              url={`${WEB_URL}${router.asPath}`}
+              title={``}
+              separator={``}
+            >
+              <WhatsappIcon size={40} round />
+            </WhatsappShareButton>
+            <IconButton
+              onClick={copyLinkBtnHandler}
+              borderRadius="50%"
+              icon={<Icon as={BiCopy} />}
+            />
+          </Stack>
+        </Box>
+      </Center>
     </Page>
   );
 };
@@ -153,7 +210,6 @@ export const getServerSideProps = requiresAuth(async (context) => {
     });
 
     const data = res.data.result.rows[0];
-    console.log(data);
     return {
       props: {
         detailPostData: data,

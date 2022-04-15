@@ -14,6 +14,7 @@ import {
   Tooltip,
   Link as UILink,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import {
@@ -33,6 +34,7 @@ const RegisterForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [showPassConfirm, setShowPassConfirm] = useState(false);
   const router = useRouter();
+  const Toast = useToast();
 
   const showPassword = () => {
     setShowPass(!showPass);
@@ -43,57 +45,79 @@ const RegisterForm = () => {
   };
 
   const userSelector = useSelector((state) => state.user);
-  // const navigate = useNavigate();
 
-  const { setFieldValue, handleSubmit, errors, touched } = useFormik({
-    initialValues: {
-      full_name: "",
-      email: "",
-      user_name: "",
-      password: "",
-      confirmPassword: "",
-    },
-    onSubmit: async (values) => {
-      try {
-        const newUser = {
-          username: values.user_name,
-          full_name: values.full_name,
-          email: values.email,
-          password: values.password,
-        };
+  const { setFieldValue, handleSubmit, errors, touched, isSubmitting } =
+    useFormik({
+      initialValues: {
+        full_name: "",
+        email: "",
+        user_name: "",
+        password: "",
+        confirmPassword: "",
+      },
+      onSubmit: async (values) => {
+        try {
+          const newUser = {
+            username: values.user_name,
+            full_name: values.full_name,
+            email: values.email,
+            password: values.password,
+          };
 
-        await axiosInstance.post("/auth/register", newUser);
-      } catch (error) {
-        console.log(error);
-      }
+          const createNewUser = await axiosInstance.post(
+            "/auth/register",
+            newUser
+          );
 
-      router.push("/login");
-    },
-    validationSchema: Yup.object().shape({
-      // TODO: add regex in the password
-      full_name: Yup.string()
-        .required("Full name is required")
-        .min(3, "Full name must be at least 3 characters")
-        .max(25, "Username must not exceed 25 characters"),
-      email: Yup.string()
-        .required("Email is required")
-        .email("Email is invalid"),
-      user_name: Yup.string()
-        .required("Username is required")
-        .min(3, "Username must be at least 3 characters")
-        .max(20, "Username must not exceed 20 characters"),
-      password: Yup.string()
-        .required("Password is required")
-        .matches(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
-        ),
-      confirmPassword: Yup.string()
-        .required("Confirm Password is required")
-        .oneOf([Yup.ref("password"), null], "Confirm Password does not match"),
-    }),
-    validateOnChange: false,
-  });
+          Toast({
+            title: "Register Successful!",
+            description: createNewUser.data.message,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+          router.push("/login");
+        } catch (error) {
+          console.log(error.response.data.message);
+          Toast({
+            title: "Register Failed!",
+            description: error.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+        }
+      },
+      validationSchema: Yup.object().shape({
+        // TODO: add regex in the password
+        full_name: Yup.string()
+          .required("Full name is required")
+          .min(3, "Full name must be at least 3 characters")
+          .max(25, "Username must not exceed 25 characters"),
+        email: Yup.string()
+          .required("Email is required")
+          .email("Email is invalid"),
+        user_name: Yup.string()
+          .required("Username is required")
+          .min(3, "Username must be at least 3 characters")
+          .max(20, "Username must not exceed 20 characters"),
+        password: Yup.string()
+          .required("Password is required")
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+            "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+          ),
+        confirmPassword: Yup.string()
+          .required("Confirm Password is required")
+          .oneOf(
+            [Yup.ref("password"), null],
+            "Confirm Password does not match"
+          ),
+      }),
+      validateOnChange: false,
+    });
 
   return (
     <Box
@@ -221,6 +245,7 @@ const RegisterForm = () => {
         onClick={() => {
           handleSubmit();
         }}
+        disabled={isSubmitting}
       >
         Sign in
       </Button>

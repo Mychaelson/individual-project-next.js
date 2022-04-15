@@ -27,6 +27,7 @@ const LoginForm = () => {
   const [show, setShow] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [disabledLoginButton, setDisabledLoginButton] = useState(false);
 
   const router = useRouter();
 
@@ -51,6 +52,7 @@ const LoginForm = () => {
   const loginButtonHandler = async (e) => {
     e.preventDefault();
     try {
+      setDisabledLoginButton(true);
       const res = await axiosInstance.post("/auth/login", {
         credential: usernameInput,
         password: passwordInput,
@@ -72,18 +74,20 @@ const LoginForm = () => {
       });
 
       Cookies.set("auth_token", res.data.result.token);
+      setDisabledLoginButton(false);
 
       router.push("/home-page");
     } catch (err) {
       console.log(err);
       toast({
         title: "login failed",
-        description: err.response.data.message,
+        description: err?.response?.data?.message,
         status: "error",
         duration: 3000,
         isClosable: true,
         position: "top",
       });
+      setDisabledLoginButton(false);
     }
   };
 
@@ -145,6 +149,7 @@ const LoginForm = () => {
             onClick={loginButtonHandler}
             mt={5}
             colorScheme="teal"
+            disabled={disabledLoginButton}
           >
             Sign in
           </Button>

@@ -73,6 +73,8 @@ const resetPassword = () => {
           isClosable: true,
           position: "top",
         });
+
+        router.push("/login");
       } catch (err) {
         console.log(err.response.data.message);
         toast({

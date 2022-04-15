@@ -80,34 +80,58 @@ const Navbar = () => {
       location: yup.string(),
       caption: yup.string(),
     }),
+    onSubmit: async (values) => {
+      if (!selectedFile) {
+        alert("Anda belum pilih file");
+        return;
+      }
+
+      const formData = new FormData();
+
+      formData.append("caption", values.caption);
+      formData.append("location", values.location);
+      formData.append("post_image_file", selectedFile);
+
+      try {
+        await axiosInstance.post("/post", formData);
+        setSelectedFile(null);
+        setImgUrlInput("");
+        formik.setFieldValue("caption", "");
+        formik.setFieldValue("location", "");
+
+        refreshPage();
+      } catch (err) {
+        console.log(err);
+      }
+    },
   });
 
-  const uploadContentHandler = async () => {
-    // Proteksi jika file belum dipilih
-    if (!selectedFile) {
-      alert("Anda belum pilih file");
-      return;
-    }
+  // const uploadContentHandler = async () => {
+  //   // Proteksi jika file belum dipilih
+  //   if (!selectedFile) {
+  //     alert("Anda belum pilih file");
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    const { caption, location } = formik.values;
+  //   const formData = new FormData();
+  //   const { caption, location } = formik.values;
 
-    formData.append("caption", caption);
-    formData.append("location", location);
-    formData.append("post_image_file", selectedFile);
+  //   formData.append("caption", caption);
+  //   formData.append("location", location);
+  //   formData.append("post_image_file", selectedFile);
 
-    try {
-      await axiosInstance.post("/post", formData);
-      setSelectedFile(null);
-      setImgUrlInput("");
-      formik.setFieldValue("caption", "");
-      formik.setFieldValue("location", "");
+  //   try {
+  //     await axiosInstance.post("/post", formData);
+  //     setSelectedFile(null);
+  //     setImgUrlInput("");
+  //     formik.setFieldValue("caption", "");
+  //     formik.setFieldValue("location", "");
 
-      refreshPage();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     refreshPage();
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const loginButton = () => {
     router.push("/login");
@@ -254,7 +278,11 @@ const Navbar = () => {
                 >
                   Cancel
                 </Button>
-                <Button colorScheme="teal" onClick={uploadContentHandler}>
+                <Button
+                  colorScheme="teal"
+                  onClick={formik.handleSubmit}
+                  disabled={formik.isSubmitting}
+                >
                   Post
                 </Button>
               </ModalFooter>

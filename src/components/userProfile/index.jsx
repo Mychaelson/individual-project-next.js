@@ -65,6 +65,57 @@ const UserProfile = (props) => {
         .min(1, "bio must be at least 1 character")
         .max(150, "bio must not exceed 150 characters"),
     }),
+    onSubmit: async (values) => {
+      const formData = new FormData();
+
+      formData.append("full_name", values.full_name);
+      formData.append("bio", values.bio);
+      values.username == userSelector.username
+        ? undefined
+        : formData.append("username", username);
+      formData.append("avatar_image_file", selectedFile);
+
+      try {
+        await axiosInstance.patch(`/user/${userSelector.id}`, formData);
+        setImgUrlInput("");
+        setSelectedFile(null);
+
+        const res = await axiosInstance.get("/user", {
+          params: {
+            user_id: userSelector.id,
+          },
+        });
+
+        const userLogin = res.data.profile;
+        // console.log(userLogin.avatar_img);
+
+        dispatch({
+          type: user_types.LOGIN_USER,
+          payload: {
+            username: userLogin.username,
+            full_name: userLogin.full_name,
+            email: userLogin.email,
+            id: userLogin.id,
+            bio: userLogin.bio,
+            avatar_url: userLogin.avatar_img,
+          },
+        });
+
+        onClose();
+
+        // refreshPage();
+      } catch (err) {
+        console.log(err);
+        Toast({
+          title: "Fetch Data Failed",
+          description: err.response.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
+    },
   });
 
   const handleFile = (event) => {
