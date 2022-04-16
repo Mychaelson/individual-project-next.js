@@ -44,6 +44,7 @@ const MyProfilePage = ({ userData }) => {
               id={userSelector.id}
               userData={userData}
               is_verify={userSelector.is_verify}
+              email={userSelector.email}
             />
           )}
           <Box ms={4} mt={4} display="flex" flexWrap="wrap">

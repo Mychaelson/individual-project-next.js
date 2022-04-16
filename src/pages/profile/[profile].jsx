@@ -69,6 +69,7 @@ const ProfilePage = () => {
               avatarUrl={dataUser.avatar_img}
               id={dataUser.id}
               is_verify={dataUser.is_verified}
+              email={dataUser.email}
             />
           )}
           <Box ms={4} mt={4} display="flex" flexWrap="wrap">

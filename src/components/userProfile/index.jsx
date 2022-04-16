@@ -123,59 +123,6 @@ const UserProfile = (props) => {
     setImgUrlInput(event?.target?.files[0]?.name);
   };
 
-  const editProfileHandler = async () => {
-    const formData = new FormData();
-    const { full_name, bio, username } = formik.values;
-
-    formData.append("full_name", full_name);
-    formData.append("bio", bio);
-    username == userSelector.username
-      ? undefined
-      : formData.append("username", username);
-    formData.append("avatar_image_file", selectedFile);
-
-    try {
-      await axiosInstance.patch(`/user/${userSelector.id}`, formData);
-      setImgUrlInput("");
-      setSelectedFile(null);
-
-      const res = await axiosInstance.get("/user", {
-        params: {
-          user_id: userSelector.id,
-        },
-      });
-
-      const userLogin = res.data.profile;
-      // console.log(userLogin.avatar_img);
-
-      dispatch({
-        type: user_types.LOGIN_USER,
-        payload: {
-          username: userLogin.username,
-          full_name: userLogin.full_name,
-          email: userLogin.email,
-          id: userLogin.id,
-          bio: userLogin.bio,
-          avatar_url: userLogin.avatar_img,
-        },
-      });
-
-      onClose();
-
-      // refreshPage();
-    } catch (err) {
-      console.log(err);
-      Toast({
-        title: "Fetch Data Failed",
-        description: err.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-    }
-  };
-
   const resendVerificationButtonHandler = async () => {
     try {
       await axiosInstance.post("/auth/resend-verification");
@@ -226,8 +173,8 @@ const UserProfile = (props) => {
         />
         <Box>
           <Stack direction={"row"}>
-            <Text fontWeight="bold" mb={2} fontSize="3xl">
-              {props.fullName}{" "}
+            <Text fontWeight="bold" mb={0} fontSize="3xl">
+              {props.username}{" "}
               {props.is_verify ? (
                 <Badge colorScheme="green">verified</Badge>
               ) : (
@@ -330,7 +277,11 @@ const UserProfile = (props) => {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={editProfileHandler} colorScheme="teal">
+                  <Button
+                    onClick={formik.handleSubmit}
+                    disabled={formik.isSubmitting}
+                    colorScheme="teal"
+                  >
                     Save
                   </Button>
                 </ModalFooter>
@@ -338,10 +289,13 @@ const UserProfile = (props) => {
             </ModalOverlay>
           </Modal>
 
+          <Text color="gray.500">
+            {props.fullName ? `${props.fullName},` : undefined} {props.email}
+          </Text>
           <Text fontSize="md">
             {props.posting} {props.posting > 1 ? "posts" : "post"}
           </Text>
-          <Text color="gray.500" my={2}>
+          <Text color="gray.500" mb={2}>
             {props.bio}
           </Text>
         </Box>
