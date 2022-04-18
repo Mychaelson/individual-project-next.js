@@ -45,14 +45,13 @@ const UserProfile = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      full_name: props.userData?.full_name,
+      full_name: props.userData?.full_name ? props.userData?.full_name : "",
       username: props.userData?.username,
-      bio: props.userData?.bio,
+      bio: props.userData?.bio ? props.userData?.bio : "",
     },
     validationSchema: yup.object().shape({
       full_name: yup
         .string()
-        .required("Full name is required")
         .min(3, "Full name must be at least 3 characters")
         .max(25, "Username must not exceed 25 characters"),
       username: yup
@@ -66,16 +65,17 @@ const UserProfile = (props) => {
         .max(150, "bio must not exceed 150 characters"),
     }),
     onSubmit: async (values) => {
-      const formData = new FormData();
-
-      formData.append("full_name", values.full_name);
-      formData.append("bio", values.bio);
-      values.username == userSelector.username
-        ? undefined
-        : formData.append("username", username);
-      formData.append("avatar_image_file", selectedFile);
-
       try {
+        console.log("test", values.full_name);
+        const formData = new FormData();
+
+        formData.append("full_name", values.full_name);
+        formData.append("bio", values.bio);
+        values.username == userSelector.username
+          ? undefined
+          : formData.append("username", username);
+        formData.append("avatar_image_file", selectedFile);
+
         await axiosInstance.patch(`/user/${userSelector.id}`, formData);
         setImgUrlInput("");
         setSelectedFile(null);
@@ -159,6 +159,10 @@ const UserProfile = (props) => {
     // free memory when ever this component is unmounted
     return () => URL.revokeObjectURL(objectUrl);
   }, [selectedFile]);
+
+  formik.errors.full_name ? console.log(formik.errors.full_name) : undefined;
+  formik.errors.bio ? console.log(formik.errors.bio) : undefined;
+  formik.errors.username ? console.log(formik.errors.username) : undefined;
 
   return (
     // <Center>
@@ -278,7 +282,9 @@ const UserProfile = (props) => {
                     Cancel
                   </Button>
                   <Button
-                    onClick={formik.handleSubmit}
+                    onClick={() => {
+                      formik.handleSubmit(), console.log("test submit");
+                    }}
                     disabled={formik.isSubmitting}
                     colorScheme="teal"
                   >
@@ -290,13 +296,14 @@ const UserProfile = (props) => {
           </Modal>
 
           <Text color="gray.500">
-            {props.fullName ? `${props.fullName},` : undefined} {props.email}
+            {props.fullName ? `${props.fullName}, ` : undefined}
+            {props.email}
           </Text>
           <Text fontSize="md">
             {props.posting} {props.posting > 1 ? "posts" : "post"}
           </Text>
           <Text color="gray.500" mb={2}>
-            {props.bio}
+            {props.bio ? props.bio : undefined}
           </Text>
         </Box>
       </Box>

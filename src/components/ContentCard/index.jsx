@@ -63,6 +63,10 @@ const ContentCard = ({
   const [displayCommentInput, setDisplayCommentInput] = useState(false);
   const [like_status, setLikeStatus] = useState(likeStatus);
 
+  useEffect(() => {
+    setLikeStatus(likeStatus);
+  }, [likeStatus]);
+
   const userSelector = useSelector((state) => state.user);
 
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -49,7 +49,6 @@ const RegisterForm = () => {
   const { setFieldValue, handleSubmit, errors, touched, isSubmitting } =
     useFormik({
       initialValues: {
-        full_name: "",
         email: "",
         user_name: "",
         password: "",
@@ -59,7 +58,6 @@ const RegisterForm = () => {
         try {
           const newUser = {
             username: values.user_name,
-            full_name: values.full_name,
             email: values.email,
             password: values.password,
           };
@@ -92,10 +90,6 @@ const RegisterForm = () => {
       },
       validationSchema: Yup.object().shape({
         // TODO: add regex in the password
-        full_name: Yup.string()
-          .required("Full name is required")
-          .min(3, "Full name must be at least 3 characters")
-          .max(25, "Username must not exceed 25 characters"),
         email: Yup.string()
           .required("Email is required")
           .email("Email is invalid"),
@@ -131,20 +125,6 @@ const RegisterForm = () => {
     >
       <Heading size="lg">Register your new account</Heading>
       <Box mt={5}>
-        <FormControl isRequired isInvalid={errors.full_name}>
-          <FormLabel htmlFor="fullName" mt={2}>
-            Full Name
-          </FormLabel>
-          <Input
-            id="fullName"
-            type="text"
-            placeholder="Hello World"
-            onChange={(e) => setFieldValue("full_name", e.target.value)}
-          />
-          {errors.full_name && touched.full_name && (
-            <FormErrorMessage>{errors.full_name}</FormErrorMessage>
-          )}
-        </FormControl>
         <FormControl isRequired isInvalid={errors.user_name}>
           <FormLabel htmlFor="username" mt={2}>
             Username
@@ -204,7 +184,7 @@ const RegisterForm = () => {
         </FormControl>
         <FormControl isRequired isInvalid={errors.confirmPassword}>
           <FormLabel htmlFor="confirmPassword" mt={2}>
-            Password
+            Confirm Password
             <Tooltip
               label="Passwords should contain at least 8 characters including an uppercase letter, a symbol, and a number"
               fontSize="sm"

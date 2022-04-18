@@ -32,12 +32,18 @@ const ContentDetail = ({ detailPostData }) => {
   const [comment, setComment] = useState([]);
   const [commentPage, setCommentPage] = useState(1);
   const [numberOfComment, setNumberOfComment] = useState();
+  const [postIsLiked, setPostIsLiked] = useState(false);
   const router = useRouter();
   const Toast = useToast();
 
   useEffect(() => {
     fetchComments();
+    checkUserLikedPost();
   }, []);
+
+  // useEffect(() => {
+  //   console.log(postIsLiked);
+  // }, [postIsLiked]);
 
   const maxCommentPerPost = 5;
 
@@ -78,6 +84,7 @@ const ContentDetail = ({ detailPostData }) => {
       let newArr = { ...data };
       newArr.like_count++;
       setData(newArr);
+      setPostIsLiked(true);
     } catch (err) {
       console.log(err);
     }
@@ -90,6 +97,7 @@ const ContentDetail = ({ detailPostData }) => {
       let newArr = { ...data };
       newArr.like_count--;
       setData(newArr);
+      setPostIsLiked(false);
     } catch (err) {
       console.log(err);
     }
@@ -105,13 +113,28 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
-  let like_status;
+  const checkUserLikedPost = async () => {
+    try {
+      const isPostLiked = await axiosInstance.get(
+        `/post/userLikedPost?post_id=${data?.id}`
+      );
 
-  if (data?.post_like?.length) {
-    like_status = true;
-  } else {
-    like_status = false;
-  }
+      if (isPostLiked.data.result) {
+        console.log(isPostLiked.data.result);
+        setPostIsLiked(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // let like_status;
+
+  // if (postIsLiked) {
+  //   like_status = true;
+  // } else {
+  //   like_status = false;
+  // }
 
   const copyLinkBtnHandler = () => {
     navigator.clipboard.writeText(`${WEB_URL}${router.asPath}`);
@@ -139,7 +162,7 @@ const ContentDetail = ({ detailPostData }) => {
             location={data?.location}
             likes={data?.like_count || 0}
             caption={data?.caption}
-            likeStatus={like_status}
+            likeStatus={postIsLiked}
             addLike={() => {
               addLike(data?.id, data?.user_id);
             }}
@@ -165,16 +188,22 @@ const ContentDetail = ({ detailPostData }) => {
         <Box mb={4}>
           <Text fontWeight="medium">Share this to your friends!</Text>
           <Stack mt={2} direction="row">
-            <FacebookShareButton url={`${WEB_URL}${router.asPath}`} quote={``}>
+            <FacebookShareButton
+              url={`${WEB_URL}${router.asPath}`}
+              quote={`${data?.caption}`}
+            >
               <FacebookIcon size={40} round />
             </FacebookShareButton>
-            <TwitterShareButton title={``} url={`${WEB_URL}${router.asPath}`}>
+            <TwitterShareButton
+              title={`${data?.caption}`}
+              url={`${WEB_URL}${router.asPath}`}
+            >
               <TwitterIcon size={40} round />
             </TwitterShareButton>
             <WhatsappShareButton
               url={`${WEB_URL}${router.asPath}`}
-              title={``}
-              separator={``}
+              title={`${data?.caption}`}
+              separator={" || "}
             >
               <WhatsappIcon size={40} round />
             </WhatsappShareButton>
@@ -190,19 +219,23 @@ const ContentDetail = ({ detailPostData }) => {
   );
 };
 
-export const getServerSideProps = requiresAuth(async (context) => {
-  console.log(context.req.cookies.auth_token);
+export const getServerSideProps = async (context) => {
+  // console.log(context.req.cookies.auth_token);
   try {
-    const res = await axios.get(`http://localhost:2000/post`, {
-      params: {
-        id: context.query.contentDetail,
-      },
-      headers: {
-        Authorization: context.req.cookies.auth_token,
-      },
-    });
+    const res = await axios.get(
+      `http://localhost:2000/post/getPostWithoutLike`,
+      {
+        params: {
+          id: context.query.contentDetail,
+        },
+        // headers: {
+        //   Authorization: context.req.cookies.auth_token,
+        // },
+      }
+    );
 
     const data = res.data.result.rows[0];
+    console.log(res.data);
     return {
       props: {
         detailPostData: data,
@@ -216,6 +249,6 @@ export const getServerSideProps = requiresAuth(async (context) => {
       },
     };
   }
-});
+};
 
 export default ContentDetail;

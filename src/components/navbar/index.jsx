@@ -280,7 +280,9 @@ const Navbar = () => {
                 </Button>
                 <Button
                   colorScheme="teal"
-                  onClick={formik.handleSubmit}
+                  onClick={() => {
+                    formik.handleSubmit();
+                  }}
                   disabled={formik.isSubmitting}
                 >
                   Post
@@ -306,7 +308,7 @@ const Navbar = () => {
                   />
                   <Text p={2} fontSize="lg">
                     Hello, {}
-                    {userSelector.full_name}
+                    {userSelector.full_name || userSelector.username}
                   </Text>
                 </Flex>
               </MenuButton>
