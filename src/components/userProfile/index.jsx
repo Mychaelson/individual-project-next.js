@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Center,
   FormControl,
   FormLabel,
   Icon,
@@ -32,18 +31,20 @@ import user_types from "../../redux/reducers/user/types";
 
 const UserProfile = (props) => {
   const userSelector = useSelector((state) => state.user);
-  const [imgUrlInput, setImgUrlInput] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState();
+  const [imgUrlInput, setImgUrlInput] = useState(""); // this state keeps the name of the file from the user
+  const [selectedFile, setSelectedFile] = useState(null); // this state keep the file
+  const [preview, setPreview] = useState(); // this state is use to display the file to the user (image)
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const inputFileRef = useRef(null);
+  const { isOpen, onOpen, onClose } = useDisclosure(); // function for modal from chakra UI
+  const inputFileRef = useRef(null); // this is use to access the html which in this case is the button for the file
   const Toast = useToast();
   const dispatch = useDispatch();
 
   // console.log(props.userData);
 
+  // input validator for edit profile
   const formik = useFormik({
+    // if the initial value is empty, then it will be replace by empty string
     initialValues: {
       full_name: props.userData?.full_name ? props.userData?.full_name : "",
       username: props.userData?.username,
@@ -66,7 +67,7 @@ const UserProfile = (props) => {
     }),
     onSubmit: async (values) => {
       try {
-        console.log("test", values.full_name);
+        // create a new formData class then the input will be put in the class using append method
         const formData = new FormData();
 
         formData.append("full_name", values.full_name);
@@ -80,6 +81,8 @@ const UserProfile = (props) => {
         setImgUrlInput("");
         setSelectedFile(null);
 
+        // after edited, the image url input and also the file in the state will be removed
+
         const res = await axiosInstance.get("/user", {
           params: {
             user_id: userSelector.id,
@@ -87,7 +90,8 @@ const UserProfile = (props) => {
         });
 
         const userLogin = res.data.profile;
-        // console.log(userLogin.avatar_img);
+
+        // after edited, request will be made to get the newest file and be dispatch to be shown to the user
 
         dispatch({
           type: user_types.LOGIN_USER,
@@ -118,11 +122,13 @@ const UserProfile = (props) => {
     },
   });
 
+  // this fuction is to handle the input of a file
   const handleFile = (event) => {
     setSelectedFile(event.target.files[0]);
     setImgUrlInput(event?.target?.files[0]?.name);
   };
 
+  // the user can also request a new verifiaction email
   const resendVerificationButtonHandler = async () => {
     try {
       await axiosInstance.post("/auth/resend-verification");
@@ -148,18 +154,22 @@ const UserProfile = (props) => {
   };
 
   useEffect(() => {
+    // won't show prefiew if there is no file
     if (!selectedFile) {
       setPreview(undefined);
       return;
     }
 
+    // a function to transform the file into a url which then can be show to user
     const objectUrl = URL.createObjectURL(selectedFile);
     setPreview(objectUrl);
 
+    // function to unset the url ( component will unmount )
     // free memory when ever this component is unmounted
     return () => URL.revokeObjectURL(objectUrl);
   }, [selectedFile]);
 
+  // this is only used to console log if there is any error
   formik.errors.full_name ? console.log(formik.errors.full_name) : undefined;
   formik.errors.bio ? console.log(formik.errors.bio) : undefined;
   formik.errors.username ? console.log(formik.errors.username) : undefined;
