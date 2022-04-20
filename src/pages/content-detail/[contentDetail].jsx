@@ -31,7 +31,7 @@ const ContentDetail = ({ detailPostData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [comment, setComment] = useState([]);
   const [commentPage, setCommentPage] = useState(1);
-  const [numberOfComment, setNumberOfComment] = useState();
+  const [numberOfComment, setNumberOfComment] = useState(0);
   const [postIsLiked, setPostIsLiked] = useState(false);
   const router = useRouter();
   const Toast = useToast();
@@ -41,22 +41,21 @@ const ContentDetail = ({ detailPostData }) => {
     checkUserLikedPost();
   }, []);
 
-  // useEffect(() => {
-  //   console.log(postIsLiked);
-  // }, [postIsLiked]);
+  const maxCommentPerCommentPage = 5;
 
-  const maxCommentPerPost = 5;
-
+  // this will fetch all the comment seperately from the post and the user for pagination of the comment section
   const fetchComments = async () => {
     try {
       const commentResult = await axiosInstance.get("/comment", {
         params: {
           post_id: data.id,
-          _limit: maxCommentPerPost,
+          _limit: maxCommentPerCommentPage,
           _page: commentPage,
         },
       });
+      // it will receive comments base on the post id from params
 
+      // then it will add the comment to existing comment
       setComment((prevComments) => [
         ...prevComments,
         ...commentResult.data.result.rows,
@@ -77,6 +76,7 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
+  // function to add like and also manipulate the local state so there is no need to send a request to get the newest data
   const addLike = async (post_id, user_id) => {
     try {
       await axiosInstance.post(`/post/${post_id}/likes/${user_id}`);
@@ -90,6 +90,7 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
+  // remove like function also work the same as add like function
   const removeLike = async (post_id, user_id) => {
     try {
       await axiosInstance.delete(`/post/${post_id}/likes/${user_id}`);
@@ -103,6 +104,7 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
+  // this function delete the post and the redirect the user to home-page
   const deleteData = (id) => {
     let confirmDelete = window.confirm("Delete the post?");
 
@@ -113,6 +115,8 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
+  // this function is used to set state on whenter the user has liked the post or not
+  // then the icon and fuction will be put accoringly to the state
   const checkUserLikedPost = async () => {
     try {
       const isPostLiked = await axiosInstance.get(
@@ -128,14 +132,7 @@ const ContentDetail = ({ detailPostData }) => {
     }
   };
 
-  // let like_status;
-
-  // if (postIsLiked) {
-  //   like_status = true;
-  // } else {
-  //   like_status = false;
-  // }
-
+  // this function is to copy the current link to the clipboard and show toast
   const copyLinkBtnHandler = () => {
     navigator.clipboard.writeText(`${WEB_URL}${router.asPath}`);
 
@@ -179,7 +176,7 @@ const ContentDetail = ({ detailPostData }) => {
             seeMoreCommentButtonHandler={fetchComments}
             commentPage={commentPage}
             numberOfPageForComment={Math.ceil(
-              numberOfComment / maxCommentPerPost
+              numberOfComment / maxCommentPerCommentPage
             )}
           />
         )}
@@ -219,8 +216,8 @@ const ContentDetail = ({ detailPostData }) => {
   );
 };
 
+// fetch the data server side mainly for share content purposes
 export const getServerSideProps = async (context) => {
-  // console.log(context.req.cookies.auth_token);
   try {
     const res = await axios.get(
       `http://localhost:2000/post/getPostWithoutLike`,
@@ -234,14 +231,15 @@ export const getServerSideProps = async (context) => {
       }
     );
 
+    // the result then will be send through object with property props and receive in the page props
     const data = res.data.result.rows[0];
-    console.log(res.data);
     return {
       props: {
         detailPostData: data,
       },
     };
   } catch (err) {
+    // it must also use try catch, and if the request failed, it will also return the props with value of null
     console.log(err.response.data);
     return {
       props: {
