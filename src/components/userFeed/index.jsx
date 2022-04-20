@@ -1,4 +1,4 @@
-import { Box, Center, Image } from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 import Link from "next/link";
 
 const Feeds = (props) => {
