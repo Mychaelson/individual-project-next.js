@@ -1,7 +1,8 @@
 import Head from "next/head";
 
+// this recieve a set of data to be shown in the meta tag, and this is used mainly for share post,
+// this will give information which will be render serverside before showing it to user
 const Page = ({ children, title, description, url, image, type }) => {
-  // ini nanti buat meta tag
   return (
     <>
       <Head>
