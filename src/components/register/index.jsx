@@ -22,7 +22,6 @@ import {
   AiOutlineEyeInvisible,
   AiOutlineInfoCircle,
 } from "react-icons/ai";
-// import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -31,21 +30,26 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const RegisterForm = () => {
-  const [showPass, setShowPass] = useState(false);
-  const [showPassConfirm, setShowPassConfirm] = useState(false);
+  const [showPass, setShowPass] = useState(false); // toggle to show password input or to disclose it
+  const [showPassConfirm, setShowPassConfirm] = useState(false); // the same as password, but for confirm password
   const router = useRouter();
   const Toast = useToast();
 
   const showPassword = () => {
     setShowPass(!showPass);
   };
-
+  // the fuction above and below is to change the state ofn the toggle after the button is clicked for their respective input group
   const showPasswordConfirm = () => {
     setShowPassConfirm(!showPassConfirm);
   };
 
   const userSelector = useSelector((state) => state.user);
 
+  // formik for the registration form which has been destructure
+  // setfieldvalue is use to set the input into formik
+  // handle submit is a fuction to be put in onclick of the button that will triggered the function in the onsubmit
+  // errors is used to show if there is any invalid input, validated using formik
+  // issubmitting is used to disable button when the process of submitting is ongoing
   const { setFieldValue, handleSubmit, errors, touched, isSubmitting } =
     useFormik({
       initialValues: {
@@ -56,6 +60,7 @@ const RegisterForm = () => {
       },
       onSubmit: async (values) => {
         try {
+          // the newuser will be the body to be send through axiosInstance
           const newUser = {
             username: values.user_name,
             email: values.email,
@@ -75,8 +80,9 @@ const RegisterForm = () => {
             isClosable: true,
             position: "top",
           });
-          router.push("/login");
+          router.push("/login"); // if all the process successful, user will be redirected to login page
         } catch (error) {
+          // if there is error in the process of axiosInstace, it will be throw to the catch and toast
           console.log(error.response.data.message);
           Toast({
             title: "Register Failed!",
@@ -99,6 +105,7 @@ const RegisterForm = () => {
           .max(20, "Username must not exceed 20 characters"),
         password: Yup.string()
           .required("Password is required")
+          // the matches is user to ensure the password is strong
           .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
             "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
@@ -111,6 +118,7 @@ const RegisterForm = () => {
           ),
       }),
       validateOnChange: false,
+      // this ensure the validation will only occur after the the user submit the form
     });
 
   return (
@@ -134,10 +142,12 @@ const RegisterForm = () => {
             type="text"
             placeholder="HelloWorld22"
             onChange={(e) => setFieldValue("user_name", e.target.value)}
+            // setfieldvalue accept 2 parameter which are the name of the field and the value
           />
           {errors.user_name && touched.user_name && (
             <FormErrorMessage>{errors.user_name}</FormErrorMessage>
           )}
+          {/* the error will be shown when there are errors */}
         </FormControl>
         <FormControl isRequired isInvalid={errors.email}>
           <FormLabel htmlFor="email">Email address</FormLabel>
@@ -167,6 +177,7 @@ const RegisterForm = () => {
             <Input
               id="password"
               type={showPass ? "text" : "password"}
+              // the type is used for the toggle to show password based on the state
               placeholder="Password"
               onChange={(e) => setFieldValue("password", e.target.value)}
             />
