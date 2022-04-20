@@ -9,7 +9,9 @@ import store from "../redux/store";
 
 function MyApp({ Component, pageProps }) {
   return (
+    // this is the redux
     <Provider store={store}>
+      {/* authProvider used to logged in the user if there is a token */}
       <AuthProvider>
         <ChakraProvider>
           <Navbar />
