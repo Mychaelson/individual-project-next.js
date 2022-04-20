@@ -1,4 +1,5 @@
-// // it will ony allow user that have already logged in to the web app to access the particular page
+// it will ony allow user that have already logged in to the web app to access the particular page
+// this is a higher order component which will wrap all the content when exporting the page
 const requiresAuth = (gssp) => {
   return async (context) => {
     const savedUserData = context.req.cookies.auth_token;
