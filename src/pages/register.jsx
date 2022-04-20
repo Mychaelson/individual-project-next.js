@@ -13,6 +13,7 @@ const Register = () => {
   );
 };
 
+// protect the page so that it can only be access if the user have not logged in
 export const getServerSideProps = guestOnly((context) => {
   return {
     props: {},
