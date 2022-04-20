@@ -3,10 +3,8 @@ import { Center, Box, Spinner, useToast } from "@chakra-ui/react";
 import Feeds from "../../components/userFeed";
 import { useState } from "react";
 import UserProfile from "../../components/userProfile";
-// import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../../config/api";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import requiresAuth from "../../config/requireAuth";
 
 const ProfilePage = () => {
@@ -18,6 +16,7 @@ const ProfilePage = () => {
   const router = useRouter();
   const Toast = useToast();
 
+  // fetching the user data also include the post from that user with the same user id
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -44,11 +43,14 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
+    // router.isready is a router object and this will ensure that the params is finished rendered as it is rendered clinet side,
+    // then the fetching is execute
     if (router.isReady) {
       fetchData();
     }
   }, [router.isReady]);
 
+  // this function render the image
   const renderData = () => {
     return data.map((val) => {
       return <Feeds id={val.id} imgUrl={val.image_url} />;
@@ -81,6 +83,7 @@ const ProfilePage = () => {
   );
 };
 
+// this protect the page so that it can only be accessed by user that have logged in
 export const getServerSideProps = requiresAuth((context) => {
   return {
     props: {},
