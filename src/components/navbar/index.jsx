@@ -24,6 +24,7 @@ import {
   FormLabel,
   Textarea,
   Image,
+  Center,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
 import { CgProfile } from "react-icons/cg";
@@ -42,11 +43,9 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 const Navbar = () => {
-  const [locationInput, setLocationInput] = useState("");
-  const [captionInput, setCaptionInput] = useState("");
-  const [imgUrlInput, setImgUrlInput] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState();
+  const [imgUrlInput, setImgUrlInput] = useState(""); // only to catch the image name
+  const [selectedFile, setSelectedFile] = useState(null); /// for the image file
+  const [preview, setPreview] = useState(); // this the state show the preview of the file (Image) if there is any
 
   const userSelector = useSelector((state) => state.user);
 
@@ -54,13 +53,15 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   // const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const inputFileRef = useRef(null);
+  const { isOpen, onOpen, onClose } = useDisclosure(); // this is for the modal from chakra ui
+  const inputFileRef = useRef(null); // this is use to access the html which in this case is the button for the file
 
+  // force refresh
   const refreshPage = () => {
     window.location.reload(false);
   };
 
+  // this function remove the redux, and cookie (when log out) which then automaticaly redirect the user to login page
   const logoutButtonHandler = () => {
     dispatch({
       type: user_types.LOGOUT_USER,
@@ -68,9 +69,10 @@ const Navbar = () => {
 
     Cookies.remove("auth_token");
 
-    router.push("/welcome-page");
+    router.push("/");
   };
 
+  // validator for the input
   const formik = useFormik({
     initialValues: {
       location: "",
@@ -86,6 +88,9 @@ const Navbar = () => {
         return;
       }
 
+      // if the input include a file, the method to send the data is not through body directly
+      // it is send through form data, which is a class and to include, use the append method
+
       const formData = new FormData();
 
       formData.append("caption", values.caption);
@@ -94,11 +99,13 @@ const Navbar = () => {
 
       try {
         await axiosInstance.post("/post", formData);
+        // after the data is send, the inout holder needs to be emptied to accomodate the next input
         setSelectedFile(null);
         setImgUrlInput("");
         formik.setFieldValue("caption", "");
         formik.setFieldValue("location", "");
 
+        // then the page is force refreshed to show the new data
         refreshPage();
       } catch (err) {
         console.log(err);
@@ -106,51 +113,29 @@ const Navbar = () => {
     },
   });
 
-  // const uploadContentHandler = async () => {
-  //   // Proteksi jika file belum dipilih
-  //   if (!selectedFile) {
-  //     alert("Anda belum pilih file");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   const { caption, location } = formik.values;
-
-  //   formData.append("caption", caption);
-  //   formData.append("location", location);
-  //   formData.append("post_image_file", selectedFile);
-
-  //   try {
-  //     await axiosInstance.post("/post", formData);
-  //     setSelectedFile(null);
-  //     setImgUrlInput("");
-  //     formik.setFieldValue("caption", "");
-  //     formik.setFieldValue("location", "");
-
-  //     refreshPage();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
+  // redirect the user to login page
   const loginButton = () => {
     router.push("/login");
   };
 
+  // this is the function to put the input of a file in the local state before it is sent to backend
   const handleFile = (event) => {
     setSelectedFile(event.target.files[0]);
     setImgUrlInput(event?.target?.files[0]?.name);
   };
 
   useEffect(() => {
+    // won't show prefiew if there is no file
     if (!selectedFile) {
       setPreview(undefined);
       return;
     }
 
+    // a function to transform the file into a url which then can be show to user
     const objectUrl = URL.createObjectURL(selectedFile);
     setPreview(objectUrl);
 
+    // function to unset the url
     // free memory when ever this component is unmounted
     return () => URL.revokeObjectURL(objectUrl);
   }, [selectedFile]);
@@ -181,21 +166,19 @@ const Navbar = () => {
             />
           </Link>
         </Box>
-        <Box className="col-span-1">
-          <InputGroup width="500px">
-            <InputLeftElement
-              pointerEvents="none"
-              children={<Icon as={AiOutlineSearch} color="gray.300" />}
-            />
-            <Input type="text" placeholder="search" />
-          </InputGroup>
-        </Box>
+        <Center>
+          <Box className="col-span-1">
+            <Text>SmileGram</Text>
+          </Box>
+        </Center>
         <Box
           display="flex"
           justifyContent="end"
           alignItems="center"
           className="col-span-1"
         >
+          {/* it will only show login button when the redux haven't filled (haven't login yet) */}
+          {/* show upload button when the redux has been filled (already login) */}
           {userSelector.id ? (
             <Button
               onClick={onOpen}
@@ -291,6 +274,7 @@ const Navbar = () => {
             </ModalContent>
           </Modal>
 
+          {/* only show menu to redirect to myprofile page and also logout button */}
           {userSelector.id ? (
             <Menu>
               <MenuButton>
