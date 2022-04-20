@@ -1,4 +1,3 @@
-import {} from "react-redux";
 import user_types from "../redux/reducers/user/types";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
