@@ -7,6 +7,7 @@ const forgotPasswordPage = () => {
   const toast = useToast();
   const router = useRouter();
 
+  // the submitButtonHandler will send the input with is an email adress for the user to receive an email to reset password
   const submitButtonHandler = async (input) => {
     try {
       await axiosInstance.post("/auth/forgot-password", {
