@@ -22,7 +22,6 @@ import {
   FormControl,
   FormLabel,
   Textarea,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
@@ -32,7 +31,6 @@ import { useState, useEffect } from "react";
 import Comments from "../comments";
 import { useFormik } from "formik";
 import axiosInstance from "../../config/api";
-// import { Link } from "react-router-dom";
 import Link from "next/link";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
@@ -56,21 +54,23 @@ const ContentCard = ({
   commentPage,
   numberOfPageForComment,
 }) => {
-  // const [comment, setcomment] = useState(post_comments || []);
-  // const [locationInput, setLocationInput] = useState(location);
-  // const [captionInput, setCaptionInput] = useState(caption);
-
-  const [displayCommentInput, setDisplayCommentInput] = useState(false);
+  const [displayCommentInput, setDisplayCommentInput] = useState(false); // toggle to wheter show the input box or hide it
   const [like_status, setLikeStatus] = useState(likeStatus);
+  // to show wheter the post has been liked by the user that logged in
+  // the icon will be adjust according to the state and the fuction will also be adjusted
 
   useEffect(() => {
     setLikeStatus(likeStatus);
   }, [likeStatus]);
+  // the use effect is used because the first likestatus send from the page is false
+  // and then there is changes in only the page but the component will not set the value to the newest likestatus,
+  // therefor, if there is any changes of the likestatus, the useefect will set the state to the newest values
 
   const userSelector = useSelector((state) => state.user);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure(); // to manipulate the modal from chakra ui
 
+  // function to render all of the comments which will be called on the place that the comments want to be shown in the html
   const renderComments = () => {
     return post_comments.map((val) => {
       return <Comments username={val?.user?.username} content={val.comment} />;
@@ -78,15 +78,17 @@ const ContentCard = ({
   };
 
   const refreshPage = () => {
+    // force refresh
     window.location.reload(false);
   };
 
-  //TODO: yup
+  // formik for the comment input
   const { setFieldValue, handleSubmit, errors, touched } = useFormik({
     initialValues: {
       comment: "",
     },
     onSubmit: async (values) => {
+      // the comment will be set on an object to impove readability of the axiosInstance code
       const newComment = {
         comment: values.comment,
         post_id: id,
@@ -94,6 +96,8 @@ const ContentCard = ({
       try {
         await axiosInstance.post("/comment", newComment);
         refreshPage();
+        // after the post successfuily posted, the force refresh is used to show the most current information of the post
+        // in this case is the comment
       } catch (err) {
         console.log(err);
       }
@@ -109,6 +113,7 @@ const ContentCard = ({
     }),
   });
 
+  // formik for edit post
   const editPost = useFormik({
     initialValues: {
       location,
@@ -128,6 +133,7 @@ const ContentCard = ({
       try {
         await axiosInstance.patch(`/post/${id}`, editPost);
 
+        // after the process succes the modal for edit post will be close, then the page will be refreshed
         onClose();
         refreshPage();
       } catch (err) {
@@ -136,14 +142,15 @@ const ContentCard = ({
     },
   });
 
+  // the profile redirect variable will be used to check whether the profile page will be others or user own profile and will be send to respective page
   let profileRedirect;
-
   if (userId === userSelector.id) {
     profileRedirect = "/my-profile";
   } else {
     profileRedirect = `/profile/${userId}`;
   }
 
+  // this fuction is to delete post which comes from the page, passed using state and props that the fuction is send (home-page or content-detail-page)
   const deletePostButtonHandler = () => {
     deleteDataFn();
 
@@ -198,6 +205,8 @@ const ContentCard = ({
                 <Link href={`/content-detail/${id}`}>
                   <MenuItem>Detail Post</MenuItem>
                 </Link>
+                {/* if the user_id of the post is the same as the id of the user that logged in,
+                then the menu to edit and delete the post will show */}
                 {userId === userSelector.id ? (
                   <>
                     <MenuItem onClick={onOpen}>Edit Post</MenuItem>
@@ -209,6 +218,7 @@ const ContentCard = ({
               </MenuList>
             </Menu>
 
+            {/* modal for edit post */}
             <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent>
@@ -253,12 +263,14 @@ const ContentCard = ({
             addLike();
             setLikeStatus(true);
           }}
+          // doubleclicking the image of the post will trigger like post function
           src={imgUrl}
           alt="View"
           objectFit="inherit"
         />
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex">
+            {/* the icon will be shown based on the likestatus toggle in the local state */}
             {like_status ? (
               <Icon
                 as={AiFillHeart}
