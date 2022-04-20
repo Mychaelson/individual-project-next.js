@@ -1,3 +1,4 @@
+// // it will ony allow user that have already logged in to the web app to access the particular page
 const requiresAuth = (gssp) => {
   return async (context) => {
     const savedUserData = context.req.cookies.auth_token;
