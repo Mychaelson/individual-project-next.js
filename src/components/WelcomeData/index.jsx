@@ -13,7 +13,7 @@ const WelcomeData = () => {
       ps="10"
       paddingEnd="10"
     >
-      <Heading size="lg">Welcome To (web name)</Heading>
+      <Heading size="lg">Welcome To SmileGram</Heading>
       <Box mt={3}>
         <Link href="/login">
           <Button color="black" borderColor="blue" border="2px" marginRight={2}>

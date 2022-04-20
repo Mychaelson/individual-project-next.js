@@ -7,7 +7,7 @@ const requiresAuth = (gssp) => {
     if (!savedUserData) {
       return {
         redirect: {
-          destination: "/welcome-page",
+          destination: "/",
         },
       };
     }
