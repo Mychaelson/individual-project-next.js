@@ -3,6 +3,7 @@ import Link from "next/link";
 
 const Feeds = (props) => {
   return (
+    // the image of a post can be click and redirect to the detail of that post based on the id
     <Link href={`/content-detail/${props.id}`}>
       <Image
         boxSize="250px"
