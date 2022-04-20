@@ -12,7 +12,8 @@ const RegisterPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(authSelector.email);
+    // redirect to home-page if the redux has been filled
+    // prteection so that the user that have loggedin cant access this page
     if (authSelector.id) {
       router.push("/home-page");
     }
