@@ -17,27 +17,16 @@ const EnterEmailOrUsername = ({
   buttonText,
   submitButtonHandler,
 }) => {
-  const [input, setInput] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [input, setInput] = useState(""); // this is where the input will be kept
+  const [isSubmitting, setIsSubmitting] = useState(false); // this is the toggle to disabled the button when submmiting which is set manually
 
+  // is the triggered when there is onchange on the input
   const inputHandler = (event) => {
     const { value } = event.target;
     setInput(value);
   };
 
-  // const formik = useFormik({
-  //   initialValues: {
-  //     email: ""
-  //   },
-  //   onSubmit: async (values)=> {
-  //     try {
-
-  //     } catch (err) {
-
-  //     }
-  //   }
-  // })
-
+  // the the input will be send after this fuction is called which is on button to send the input to backend
   const submitButton = async () => {
     setIsSubmitting(true);
     await submitButtonHandler(input);
