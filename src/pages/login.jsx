@@ -10,6 +10,7 @@ const Login = () => {
   const authSelector = useSelector((state) => state.user);
   const router = useRouter();
 
+  // protect the page so that it can only be access if the user have not logged in
   useEffect(() => {
     if (authSelector.id) {
       router.push("/home-page");
