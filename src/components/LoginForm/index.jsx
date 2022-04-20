@@ -24,15 +24,16 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
 const LoginForm = () => {
-  const [show, setShow] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
+  const [show, setShow] = useState(false); // toggle to change the type of input between password and text
+  const [credentialInput, setCredentialInput] = useState(""); // user can login using email or username, so the name of the input will be generic
   const [passwordInput, setPasswordInput] = useState("");
-  const [disabledLoginButton, setDisabledLoginButton] = useState(false);
+  const [disabledLoginButton, setDisabledLoginButton] = useState(false); // manual toggle to disabling a button
 
   const router = useRouter();
 
   const toast = useToast();
 
+  // to change the state for the input type
   const showPass = () => {
     setShow(!show);
   };
@@ -40,10 +41,11 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const userSelector = useSelector((state) => state.user);
 
+  // this function act as event handler for the change in input which will set the local state before submitting
   const inputHandler = (event, field) => {
     const { value } = event.target;
     if (field === "username") {
-      setUsernameInput(value);
+      setCredentialInput(value);
     } else if (field === "password") {
       setPasswordInput(value);
     }
@@ -51,15 +53,19 @@ const LoginForm = () => {
 
   const loginButtonHandler = async (e) => {
     e.preventDefault();
+    // prevent default is use to cancel a event from the button with type submit and run the fuction that we have provide,
+    // by default, the button will run the fuction from the button (in this case none), but because the submit function is on other function,
+    // the default must be turn off using the prevent default, the event (e) is a default parameter of an event
     try {
       setDisabledLoginButton(true);
       const res = await axiosInstance.post("/auth/login", {
-        credential: usernameInput,
+        credential: credentialInput,
         password: passwordInput,
       });
 
       const userLogin = res.data.result.findUser;
 
+      // the data then sent to redux, and set as a global state
       dispatch({
         type: user_types.LOGIN_USER,
         payload: {
@@ -74,6 +80,7 @@ const LoginForm = () => {
       });
 
       Cookies.set("auth_token", res.data.result.token);
+      // the result also have token to be set as a cookie
       setDisabledLoginButton(false);
 
       router.push("/home-page");
