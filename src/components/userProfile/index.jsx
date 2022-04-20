@@ -174,6 +174,7 @@ const UserProfile = (props) => {
           src={props.avatarUrl}
           marginX={8}
           my={4}
+          boxShadow={"md"}
         />
         <Box>
           <Stack direction={"row"}>

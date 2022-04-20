@@ -97,6 +97,8 @@ const MyProfilePage = ({ userData }) => {
             mb={2}
             pl={16}
             height="40px"
+            borderBottom={"1px solid"}
+            borderColor={"blackAlpha.200"}
           >
             <Icon
               as={currentList ? AiFillAppstore : AiOutlineAppstore}
@@ -113,7 +115,6 @@ const MyProfilePage = ({ userData }) => {
               }}
             />
           </Flex>
-          <Divider variant="solid" class="border-1 border-black" />
           <Box ms={4} mt={8} display="flex" flexWrap="wrap">
             {currentList ? renderPost() : renderLikedPost()}
           </Box>
