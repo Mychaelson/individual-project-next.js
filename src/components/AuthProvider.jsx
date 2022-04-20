@@ -7,6 +7,7 @@ import axiosInstance from "../config/api";
 
 // authProvider is an component that return the component or a page as a children after a process has been executed
 // for this case, the process is to keep the user logged in, if there is a cookie in the browser which is usually used when the user refresh the page
+// the content wrap is children, and it will execute the code in the the authprovider, then execute the code in the children
 const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
 
