@@ -31,14 +31,17 @@ const resetPassword = () => {
   const router = useRouter();
   const toast = useToast();
 
+  // fuction triggered to change the toggle
   const showPassword = () => {
     setShowPass(!showPass);
   };
 
+  // also to change the toogle for different field
   const showPasswordConfirm = () => {
     setShowPassConfirm(!showPassConfirm);
   };
 
+  // the validation is used to ensure the password and confirm password is the same and include all the unique characters
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -56,6 +59,7 @@ const resetPassword = () => {
         .oneOf([Yup.ref("password"), null], "Confirm Password does not match"),
     }),
     onSubmit: async (values) => {
+      // when submitting, the password (formik), and forgot password token (query) will be taken and send to backend
       try {
         const newPassword = {
           password: values.password,

@@ -33,6 +33,8 @@ function HomePage() {
 
   const Toast = useToast();
 
+  // the like status is gotton from chcking the length of post_like
+  // if there is any, it means the post has been like by the user taht is logged in
   const renderData = () => {
     return data.map((val, idx) => {
       let like_status;
@@ -67,6 +69,7 @@ function HomePage() {
     });
   };
 
+  // first send a request to backend to add like and then manually increase the like count for the post on local state
   const addLike = async (post_id, user_id, idx) => {
     try {
       await axiosInstance.post(`/post/${post_id}/likes/${user_id}`);
@@ -79,6 +82,7 @@ function HomePage() {
     }
   };
 
+  // similar to like, just the opposite, which reduce the like count and delete the like on back end
   const removeLike = async (post_id, user_id, idx) => {
     try {
       await axiosInstance.delete(`/post/${post_id}/likes/${user_id}`);
@@ -93,6 +97,7 @@ function HomePage() {
 
   const maxPostPerPage = 5;
 
+  // there is limit on the data that will be fetch each request for pagination
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -107,6 +112,7 @@ function HomePage() {
 
       const allPost = res.data.result.rows;
 
+      // for infinite scroll, the data will be added to the previous data
       setData([...data, ...allPost]);
       setIsLoading(false);
       setDataLength(res.data.result.count);
@@ -116,12 +122,14 @@ function HomePage() {
     }
   };
 
+  // the data will be fetch again by calling this function, and the use efect will be triggered to fetch other data
   const fecthNextPage = () => {
     if (page < Math.ceil(dataLength / maxPostPerPage)) {
       setPage(page + 1);
     }
   };
 
+  // ask for confirimation, then delete the post
   const deleteData = (id) => {
     let confirmDelete = window.confirm("Delete the post?");
 
