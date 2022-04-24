@@ -65,14 +65,14 @@ const ContentDetail = ({ detailPostData }) => {
       setNumberOfComment(commentResult.data.result.count);
     } catch (err) {
       console.log(err);
-      Toast({
-        title: "Fetch Data Failed",
-        description: err.response.data.message,
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      // Toast({
+      //   title: "Fetch Data Failed",
+      //   description: err.response.data.message,
+      //   status: "info",
+      //   duration: 5000,
+      //   isClosable: true,
+      //   position: "top",
+      // });
     }
   };
 
@@ -183,7 +183,7 @@ const ContentDetail = ({ detailPostData }) => {
       </div>
       <Center>
         <Box mb={4}>
-          <Text fontWeight="medium">Share this to your friends!</Text>
+          <Text fontWeight="medium">Share this Post to your friends!</Text>
           <Stack mt={2} direction="row">
             <FacebookShareButton
               url={`${WEB_URL}${router.asPath}`}
