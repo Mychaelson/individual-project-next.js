@@ -35,7 +35,7 @@ import Link from "next/link";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 
-const ContentCard = ({
+const DetailPost = ({
   username,
   location,
   likes,
@@ -51,22 +51,26 @@ const ContentCard = ({
   addLike,
   removeLike,
   seeMoreCommentButtonHandler,
-  commentPage,
   numberOfPageForComment,
   isDetailPost,
 }) => {
   const [displayCommentInput, setDisplayCommentInput] = useState(false); // toggle to wheter show the input box or hide it
   const [like_status, setLikeStatus] = useState(likeStatus);
-  const [comment, setComment] = useState(post_comments);
   // to show wheter the post has been liked by the user that logged in
   // the icon will be adjust according to the state and the fuction will also be adjusted
+  const [comment, setComment] = useState([]);
+  const [commentPage, setCommentPage] = useState(1);
+  const [numberOfComment, setNumberOfComment] = useState(0);
 
   useEffect(() => {
     setLikeStatus(likeStatus);
+    fetchComments();
   }, [likeStatus]);
   // the use effect is used because the first likestatus send from the page is false
   // and then there is changes in only the page but the component will not set the value to the newest likestatus,
   // therefor, if there is any changes of the likestatus, the useefect will set the state to the newest values
+
+  console.log(comment);
 
   const userSelector = useSelector((state) => state.user);
 
@@ -77,6 +81,42 @@ const ContentCard = ({
     return comment.map((val) => {
       return <Comments username={val?.user?.username} content={val.comment} />;
     });
+  };
+
+  const maxCommentPerCommentPage = 5;
+
+  // this will fetch all the comment seperately from the post and the user for pagination of the comment section
+  const fetchComments = async () => {
+    try {
+      const commentResult = await axiosInstance.get("/comment", {
+        params: {
+          post_id: id,
+          _limit: maxCommentPerCommentPage,
+          _page: commentPage,
+        },
+      });
+      console.log(commentResult, "test1");
+      // it will receive comments base on the post id from params
+
+      // then it will add the comment to existing comment
+      setComment((prevComments) => [
+        ...prevComments,
+        ...commentResult.data.result.rows,
+      ]);
+
+      setCommentPage(commentPage + 1);
+      setNumberOfComment(commentResult.data.result.count);
+    } catch (err) {
+      console.log(err);
+      // Toast({
+      //   title: "Fetch Data Failed",
+      //   description: err.response.data.message,
+      //   status: "info",
+      //   duration: 5000,
+      //   isClosable: true,
+      //   position: "top",
+      // });
+    }
   };
 
   const refreshPage = () => {
@@ -97,17 +137,13 @@ const ContentCard = ({
       };
       try {
         await axiosInstance.post("/comment", newComment);
-        // if (comment.length > 5) {
-        //   // const currentComment = [...comment].pop();
-
-        // }
         const newestComment = {
           comment: values.comment,
           user: {
             username: userSelector.username,
           },
         };
-        setComment([newestComment, ...comment.slice(0, 4)]);
+        setComment([newestComment, ...comment]);
       } catch (err) {
         console.log(err);
       }
@@ -346,8 +382,9 @@ const ContentCard = ({
             Comments
           </Text>
           {renderComments()}
-          {commentPage <= numberOfPageForComment ? (
-            <Text color="gray.500" onClick={seeMoreCommentButtonHandler}>
+          {commentPage <=
+          Math.ceil(numberOfComment / maxCommentPerCommentPage) ? (
+            <Text color="gray.500" onClick={fetchComments}>
               See More Comments
             </Text>
           ) : undefined}
@@ -379,4 +416,4 @@ const ContentCard = ({
   );
 };
 
-export default ContentCard;
+export default DetailPost;

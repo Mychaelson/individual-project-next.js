@@ -25,56 +25,18 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import { BiCopy } from "react-icons/bi";
+import DetailPost from "../../components/detailPost";
 
 const ContentDetail = ({ detailPostData }) => {
   const [data, setData] = useState(detailPostData);
   const [isLoading, setIsLoading] = useState(false);
-  const [comment, setComment] = useState([]);
-  const [commentPage, setCommentPage] = useState(1);
-  const [numberOfComment, setNumberOfComment] = useState(0);
   const [postIsLiked, setPostIsLiked] = useState(false);
   const router = useRouter();
   const Toast = useToast();
 
   useEffect(() => {
-    fetchComments();
     checkUserLikedPost();
   }, []);
-
-  const maxCommentPerCommentPage = 5;
-
-  // this will fetch all the comment seperately from the post and the user for pagination of the comment section
-  const fetchComments = async () => {
-    try {
-      const commentResult = await axiosInstance.get("/comment", {
-        params: {
-          post_id: data.id,
-          _limit: maxCommentPerCommentPage,
-          _page: commentPage,
-        },
-      });
-      // it will receive comments base on the post id from params
-
-      // then it will add the comment to existing comment
-      setComment((prevComments) => [
-        ...prevComments,
-        ...commentResult.data.result.rows,
-      ]);
-
-      setCommentPage(commentPage + 1);
-      setNumberOfComment(commentResult.data.result.count);
-    } catch (err) {
-      console.log(err);
-      // Toast({
-      //   title: "Fetch Data Failed",
-      //   description: err.response.data.message,
-      //   status: "info",
-      //   duration: 5000,
-      //   isClosable: true,
-      //   position: "top",
-      // });
-    }
-  };
 
   // function to add like and also manipulate the local state so there is no need to send a request to get the newest data
   const addLike = async (post_id, user_id) => {
@@ -154,7 +116,7 @@ const ContentDetail = ({ detailPostData }) => {
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
         {/* {renderData()} */}
         {isLoading ? null : (
-          <ContentCard
+          <DetailPost
             username={data?.user_posts?.username}
             location={data?.location}
             likes={data?.like_count || 0}
@@ -171,13 +133,8 @@ const ContentDetail = ({ detailPostData }) => {
             id={data?.id}
             userId={data?.user_id}
             userPhotoProfile={data?.user_posts?.avatar_img}
-            post_comments={comment}
             date={data?.createdAt}
-            seeMoreCommentButtonHandler={fetchComments}
-            commentPage={commentPage}
-            numberOfPageForComment={Math.ceil(
-              numberOfComment / maxCommentPerCommentPage
-            )}
+            isDetailPost={true}
           />
         )}
       </div>
