@@ -80,6 +80,9 @@ const ContentCard = ({
 
   // function to render all of the comments which will be called on the place that the comments want to be shown in the html
   const renderComments = () => {
+    if (comment.length > 5) {
+      setComment(comment.slice(0, 5));
+    }
     return comment.map((val) => {
       return <Comments username={val?.user?.username} content={val.comment} />;
     });

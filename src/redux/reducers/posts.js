@@ -44,8 +44,6 @@ const PostReducers = (state = initital_value, action) => {
       ...selectedPost.comments,
     ];
 
-    console.log(post);
-
     return {
       ...state,
       postLists: post,

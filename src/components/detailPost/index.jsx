@@ -75,8 +75,6 @@ const DetailPost = ({
     fetchComments();
   }, []);
 
-  console.log(comment);
-
   const userSelector = useSelector((state) => state.user);
 
   const { isOpen, onOpen, onClose } = useDisclosure(); // to manipulate the modal from chakra ui
