@@ -12,6 +12,7 @@
     "@chakra-ui/react": "^1.8.6",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "aos": "^2.3.4",
     "axios": "^0.26.1",
     "formik": "^2.2.9",
     "framer-motion": "^6.2.8",
@@ -26,6 +27,7 @@
     "react-redux": "^7.2.6",
     "react-share": "^4.4.0",
     "redux": "^4.1.2",
+    "scrollreveal": "^4.0.9",
     "yup": "^0.32.11"
   },
   "devDependencies": {

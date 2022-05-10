@@ -58,6 +58,8 @@ const ContentCard = ({
   const [displayCommentInput, setDisplayCommentInput] = useState(false); // toggle to wheter show the input box or hide it
   const [like_status, setLikeStatus] = useState(likeStatus);
   const [comment, setComment] = useState(post_comments);
+  const [postLocation, setPostLocation] = useState(location);
+  const [postCaption, setPostCaption] = useState(caption);
   // to show wheter the post has been liked by the user that logged in
   // the icon will be adjust according to the state and the fuction will also be adjusted
 
@@ -126,8 +128,8 @@ const ContentCard = ({
   // formik for edit post
   const editPost = useFormik({
     initialValues: {
-      location,
-      caption,
+      location: postLocation,
+      caption: postCaption,
     },
     validationSchema: Yup.object().shape({
       location: Yup.string()
@@ -142,10 +144,9 @@ const ContentCard = ({
 
       try {
         await axiosInstance.patch(`/post/${id}`, editPost);
-
-        // after the process succes the modal for edit post will be close, then the page will be refreshed
         onClose();
-        refreshPage();
+        setPostCaption(values.caption);
+        setPostLocation(values.location);
       } catch (err) {
         console.log(err);
       }
@@ -196,7 +197,7 @@ const ContentCard = ({
                 </Text>
               </Link>
               <Text color="gray.500" fontSize="smaller">
-                {location}
+                {postLocation}
               </Text>
             </div>
           </Box>
@@ -337,7 +338,7 @@ const ContentCard = ({
             <span className="font-bold">{username}</span>{" "}
             <span className="font-light">
               {" "}
-              {caption ? "-" : undefined} {caption}{" "}
+              {postCaption ? "-" : undefined} {postCaption}{" "}
             </span>
           </Text>
         </Box>

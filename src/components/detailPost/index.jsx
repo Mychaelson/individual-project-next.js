@@ -61,6 +61,8 @@ const DetailPost = ({
   const [comment, setComment] = useState([]);
   const [commentPage, setCommentPage] = useState(1);
   const [numberOfComment, setNumberOfComment] = useState(0);
+  const [postLocation, setPostLocation] = useState(location);
+  const [postCaption, setPostCaption] = useState(caption);
 
   useEffect(() => {
     setLikeStatus(likeStatus);
@@ -108,14 +110,6 @@ const DetailPost = ({
       setNumberOfComment(commentResult.data.result.count);
     } catch (err) {
       console.log(err);
-      // Toast({
-      //   title: "Fetch Data Failed",
-      //   description: err.response.data.message,
-      //   status: "info",
-      //   duration: 5000,
-      //   isClosable: true,
-      //   position: "top",
-      // });
     }
   };
 
@@ -162,8 +156,8 @@ const DetailPost = ({
   // formik for edit post
   const editPost = useFormik({
     initialValues: {
-      location,
-      caption,
+      location: postLocation,
+      caption: postCaption,
     },
     validationSchema: Yup.object().shape({
       location: Yup.string()
@@ -181,7 +175,9 @@ const DetailPost = ({
 
         // after the process succes the modal for edit post will be close, then the page will be refreshed
         onClose();
-        refreshPage();
+        setPostCaption(values.caption);
+        setPostLocation(values.location);
+        // refreshPage();
       } catch (err) {
         console.log(err);
       }
@@ -232,7 +228,7 @@ const DetailPost = ({
                 </Text>
               </Link>
               <Text color="gray.500" fontSize="smaller">
-                {location}
+                {postLocation}
               </Text>
             </div>
           </Box>
@@ -373,7 +369,7 @@ const DetailPost = ({
             <span className="font-bold">{username}</span>{" "}
             <span className="font-light">
               {" "}
-              {caption ? "-" : undefined} {caption}{" "}
+              {postCaption ? "-" : undefined} {postCaption}{" "}
             </span>
           </Text>
         </Box>

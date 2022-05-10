@@ -19,6 +19,8 @@ import Page from "../components/Page";
 import { useSelector } from "react-redux";
 import requiresAuth from "../config/requireAuth";
 import InfiniteScroll from "react-infinite-scroll-component";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function HomePage() {
   const [data, setData] = useState([]);
@@ -30,6 +32,11 @@ function HomePage() {
   useEffect(() => {
     fetchData();
   }, [page]);
+
+  useEffect(() => {
+    AOS.init({ duration: 2000 });
+    AOS.refresh();
+  }, []);
 
   const Toast = useToast();
 
@@ -45,26 +52,28 @@ function HomePage() {
         like_status = false;
       }
       return (
-        <ContentCard
-          username={val?.user_posts?.username}
-          location={val?.location}
-          likes={val?.like_count}
-          date={val?.createdAt}
-          caption={val?.caption}
-          addLike={() => {
-            addLike(val?.id, userSelector.id, idx);
-          }}
-          removeLike={() => {
-            removeLike(val.id, userSelector.id, idx);
-          }}
-          deleteDataFn={() => deleteData(val.id)}
-          imgUrl={val?.image_url}
-          id={val?.id}
-          userId={val?.user_posts?.id}
-          userPhotoProfile={val?.user_posts?.avatar_img}
-          post_comments={val?.comments}
-          likeStatus={like_status}
-        />
+        <Box data-aos="fade-up">
+          <ContentCard
+            username={val?.user_posts?.username}
+            location={val?.location}
+            likes={val?.like_count}
+            date={val?.createdAt}
+            caption={val?.caption}
+            addLike={() => {
+              addLike(val?.id, userSelector.id, idx);
+            }}
+            removeLike={() => {
+              removeLike(val.id, userSelector.id, idx);
+            }}
+            deleteDataFn={() => deleteData(val.id)}
+            imgUrl={val?.image_url}
+            id={val?.id}
+            userId={val?.user_posts?.id}
+            userPhotoProfile={val?.user_posts?.avatar_img}
+            post_comments={val?.comments}
+            likeStatus={like_status}
+          />
+        </Box>
       );
     });
   };
