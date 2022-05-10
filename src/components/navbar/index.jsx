@@ -41,6 +41,8 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { fetchContents } from "../../redux/action/fetchPosts";
+import posts_types from "../../redux/reducers/posts/types";
 
 const Navbar = () => {
   const [imgUrlInput, setImgUrlInput] = useState(""); // only to catch the image name
@@ -98,15 +100,20 @@ const Navbar = () => {
       formData.append("post_image_file", selectedFile);
 
       try {
-        await axiosInstance.post("/post", formData);
+        const postNewPost = await axiosInstance.post("/post", formData);
         // after the data is send, the inout holder needs to be emptied to accomodate the next input
         setSelectedFile(null);
         setImgUrlInput("");
         formik.setFieldValue("caption", "");
         formik.setFieldValue("location", "");
 
+        dispatch({
+          type: posts_types.NEW_POST,
+          payload: postNewPost.data.result,
+        });
+        onClose();
         // then the page is force refreshed to show the new data
-        refreshPage();
+        // refreshPage();
       } catch (err) {
         console.log(err);
       }

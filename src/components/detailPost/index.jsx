@@ -66,11 +66,14 @@ const DetailPost = ({
 
   useEffect(() => {
     setLikeStatus(likeStatus);
-    fetchComments();
   }, [likeStatus]);
   // the use effect is used because the first likestatus send from the page is false
   // and then there is changes in only the page but the component will not set the value to the newest likestatus,
   // therefor, if there is any changes of the likestatus, the useefect will set the state to the newest values
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
 
   console.log(comment);
 
@@ -101,10 +104,14 @@ const DetailPost = ({
       // it will receive comments base on the post id from params
 
       // then it will add the comment to existing comment
-      setComment((prevComments) => [
-        ...prevComments,
-        ...commentResult.data.result.rows,
-      ]);
+      if (commentPage == 1) {
+        setComment(commentResult.data.result.rows);
+      } else {
+        setComment((prevComments) => [
+          ...prevComments,
+          ...commentResult.data.result.rows,
+        ]);
+      }
 
       setCommentPage(commentPage + 1);
       setNumberOfComment(commentResult.data.result.count);
