@@ -33,6 +33,7 @@ const PostReducers = (state = initital_value, action) => {
       postLists: posts,
     };
   } else if (action.type == posts_types.EDIT_POST) {
+    console.log("hei");
     const post = [...state.postLists];
     const selectedPost = post[action.payload.idx];
 
@@ -43,6 +44,14 @@ const PostReducers = (state = initital_value, action) => {
       },
       ...selectedPost.comments,
     ];
+
+    // if (
+    //   selectedPost.comments.length > 5 &&
+    //   selectedPost.comments.length % 5 == 0
+    // ) {
+    //   console.log("test");
+    //   selectedPost.comments.splice(-1);
+    // }
 
     return {
       ...state,

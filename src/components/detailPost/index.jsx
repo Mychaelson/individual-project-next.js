@@ -33,7 +33,8 @@ import { useFormik } from "formik";
 import axiosInstance from "../../config/api";
 import Link from "next/link";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import posts_types from "../../redux/reducers/posts/types";
 
 const DetailPost = ({
   username,
@@ -64,6 +65,7 @@ const DetailPost = ({
   const [postLocation, setPostLocation] = useState(location);
   const [postCaption, setPostCaption] = useState(caption);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     setLikeStatus(likeStatus);
   }, [likeStatus]);
@@ -118,6 +120,27 @@ const DetailPost = ({
     }
   };
 
+  const fetchInitialComments = async () => {
+    try {
+      const commentResult = await axiosInstance.get("/comment", {
+        params: {
+          post_id: id,
+          _limit: maxCommentPerCommentPage,
+          _page: 1,
+        },
+      });
+      // it will receive comments base on the post id from params
+
+      // then it will add the comment to existing comment
+      setComment(commentResult.data.result.rows);
+
+      setCommentPage(2);
+      setNumberOfComment(commentResult.data.result.count);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const refreshPage = () => {
     // force refresh
     window.location.reload(false);
@@ -142,7 +165,8 @@ const DetailPost = ({
             username: userSelector.username,
           },
         };
-        setComment([newestComment, ...comment]);
+
+        fetchInitialComments();
       } catch (err) {
         console.log(err);
       }
