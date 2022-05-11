@@ -238,7 +238,7 @@ const RegisterForm = () => {
         }}
         disabled={isSubmitting}
       >
-        Sign in
+        Register
       </Button>
     </Box>
   );
