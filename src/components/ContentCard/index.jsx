@@ -88,11 +88,6 @@ const ContentCard = ({
     });
   };
 
-  const refreshPage = () => {
-    // force refresh
-    window.location.reload(false);
-  };
-
   useEffect(() => {
     setComment(post_comments);
   }, [post_comments]);
@@ -181,8 +176,6 @@ const ContentCard = ({
   // this fuction is to delete post which comes from the page, passed using state and props that the fuction is send (home-page or content-detail-page)
   const deletePostButtonHandler = () => {
     deleteDataFn();
-
-    // refreshPage();
   };
 
   return (

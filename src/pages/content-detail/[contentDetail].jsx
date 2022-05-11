@@ -28,6 +28,8 @@ import { BiCopy } from "react-icons/bi";
 import DetailPost from "../../components/detailPost";
 import { useDispatch } from "react-redux";
 import posts_types from "../../redux/reducers/posts/types";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const ContentDetail = ({ detailPostData }) => {
   const [data, setData] = useState(detailPostData);
@@ -40,6 +42,11 @@ const ContentDetail = ({ detailPostData }) => {
 
   useEffect(() => {
     checkUserLikedPost();
+  }, []);
+
+  useEffect(() => {
+    AOS.init({ duration: 2000 });
+    AOS.refresh();
   }, []);
 
   // function to add like and also manipulate the local state so there is no need to send a request to get the newest data
@@ -138,32 +145,34 @@ const ContentDetail = ({ detailPostData }) => {
         <Center>{isLoading ? <Spinner size="lg" /> : null}</Center>
         {/* {renderData()} */}
         {isLoading ? null : (
-          <DetailPost
-            username={data?.user_posts?.username}
-            location={data?.location}
-            likes={data?.like_count || 0}
-            caption={data?.caption}
-            likeStatus={postIsLiked}
-            addLike={() => {
-              addLike(data?.id, data?.user_id);
-            }}
-            removeLike={() => {
-              removeLike(data?.id, data?.user_id);
-            }}
-            deleteDataFn={() => deleteData(data.id)}
-            imgUrl={data?.image_url}
-            id={data?.id}
-            userId={data?.user_id}
-            userPhotoProfile={data?.user_posts?.avatar_img}
-            date={data?.createdAt}
-            isDetailPost={true}
-          />
+          <Box data-aos="fade-up">
+            <DetailPost
+              username={data?.user_posts?.username}
+              location={data?.location}
+              likes={data?.like_count || 0}
+              caption={data?.caption}
+              likeStatus={postIsLiked}
+              addLike={() => {
+                addLike(data?.id, data?.user_id);
+              }}
+              removeLike={() => {
+                removeLike(data?.id, data?.user_id);
+              }}
+              deleteDataFn={() => deleteData(data.id)}
+              imgUrl={data?.image_url}
+              id={data?.id}
+              userId={data?.user_id}
+              userPhotoProfile={data?.user_posts?.avatar_img}
+              date={data?.createdAt}
+              isDetailPost={true}
+            />
+          </Box>
         )}
       </div>
       <Center>
         <Box mb={4}>
           <Text fontWeight="medium">Share this Post to your friends!</Text>
-          <Stack mt={2} direction="row">
+          <Stack mt={2} px={2} spacing={4} direction="row">
             <FacebookShareButton
               url={`${WEB_URL}${router.asPath}`}
               quote={`${data?.caption}`}

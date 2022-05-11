@@ -142,11 +142,6 @@ const DetailPost = ({
     }
   };
 
-  const refreshPage = () => {
-    // force refresh
-    window.location.reload(false);
-  };
-
   // formik for the comment input
   const { setFieldValue, handleSubmit, errors, touched } = useFormik({
     initialValues: {
@@ -203,11 +198,9 @@ const DetailPost = ({
       try {
         await axiosInstance.patch(`/post/${id}`, editPost);
 
-        // after the process succes the modal for edit post will be close, then the page will be refreshed
         onClose();
         setPostCaption(values.caption);
         setPostLocation(values.location);
-        // refreshPage();
       } catch (err) {
         console.log(err);
       }
