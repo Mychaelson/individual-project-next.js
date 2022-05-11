@@ -113,7 +113,7 @@ const LoginForm = () => {
           <Heading size="lg">Sign in to your account</Heading>
           <Box mt={5}>
             <FormControl>
-              <FormLabel htmlFor="username">Username</FormLabel>
+              <FormLabel htmlFor="username">Username or Email</FormLabel>
               <Input
                 onChange={(e) => {
                   inputHandler(e, "username");

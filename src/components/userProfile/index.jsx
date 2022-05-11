@@ -102,6 +102,7 @@ const UserProfile = (props) => {
             id: userLogin.id,
             bio: userLogin.bio,
             avatar_url: userLogin.avatar_img,
+            is_verify: userLogin.is_verified,
           },
         });
 
@@ -188,7 +189,7 @@ const UserProfile = (props) => {
           <Stack direction={"row"}>
             <Text fontWeight="bold" mb={0} fontSize="3xl">
               {props.username}{" "}
-              {props.is_verify ? (
+              {userSelector.is_verify ? (
                 <Badge colorScheme="green">verified</Badge>
               ) : (
                 <Badge colorScheme="gray">not verified</Badge>
