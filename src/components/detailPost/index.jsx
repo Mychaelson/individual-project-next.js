@@ -35,6 +35,7 @@ import Link from "next/link";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import posts_types from "../../redux/reducers/posts/types";
+import Router from "next/router";
 
 const DetailPost = ({
   username,
@@ -225,7 +226,7 @@ const DetailPost = ({
   const deletePostButtonHandler = () => {
     deleteDataFn();
 
-    refreshPage();
+    Router.push("/home-page");
   };
 
   return (
