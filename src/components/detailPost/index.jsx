@@ -33,7 +33,9 @@ import { useFormik } from "formik";
 import axiosInstance from "../../config/api";
 import Link from "next/link";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import posts_types from "../../redux/reducers/posts/types";
+import Router from "next/router";
 
 const DetailPost = ({
   username,
@@ -64,15 +66,17 @@ const DetailPost = ({
   const [postLocation, setPostLocation] = useState(location);
   const [postCaption, setPostCaption] = useState(caption);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     setLikeStatus(likeStatus);
-    fetchComments();
   }, [likeStatus]);
   // the use effect is used because the first likestatus send from the page is false
   // and then there is changes in only the page but the component will not set the value to the newest likestatus,
   // therefor, if there is any changes of the likestatus, the useefect will set the state to the newest values
 
-  console.log(comment);
+  useEffect(() => {
+    fetchComments();
+  }, []);
 
   const userSelector = useSelector((state) => state.user);
 
@@ -101,10 +105,14 @@ const DetailPost = ({
       // it will receive comments base on the post id from params
 
       // then it will add the comment to existing comment
-      setComment((prevComments) => [
-        ...prevComments,
-        ...commentResult.data.result.rows,
-      ]);
+      if (commentPage == 1) {
+        setComment(commentResult.data.result.rows);
+      } else {
+        setComment((prevComments) => [
+          ...prevComments,
+          ...commentResult.data.result.rows,
+        ]);
+      }
 
       setCommentPage(commentPage + 1);
       setNumberOfComment(commentResult.data.result.count);
@@ -113,9 +121,25 @@ const DetailPost = ({
     }
   };
 
-  const refreshPage = () => {
-    // force refresh
-    window.location.reload(false);
+  const fetchInitialComments = async () => {
+    try {
+      const commentResult = await axiosInstance.get("/comment", {
+        params: {
+          post_id: id,
+          _limit: maxCommentPerCommentPage,
+          _page: 1,
+        },
+      });
+      // it will receive comments base on the post id from params
+
+      // then it will add the comment to existing comment
+      setComment(commentResult.data.result.rows);
+
+      setCommentPage(2);
+      setNumberOfComment(commentResult.data.result.count);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // formik for the comment input
@@ -137,7 +161,8 @@ const DetailPost = ({
             username: userSelector.username,
           },
         };
-        setComment([newestComment, ...comment]);
+
+        fetchInitialComments();
       } catch (err) {
         console.log(err);
       }
@@ -173,11 +198,9 @@ const DetailPost = ({
       try {
         await axiosInstance.patch(`/post/${id}`, editPost);
 
-        // after the process succes the modal for edit post will be close, then the page will be refreshed
         onClose();
         setPostCaption(values.caption);
         setPostLocation(values.location);
-        // refreshPage();
       } catch (err) {
         console.log(err);
       }
@@ -196,7 +219,7 @@ const DetailPost = ({
   const deletePostButtonHandler = () => {
     deleteDataFn();
 
-    refreshPage();
+    Router.push("/home-page");
   };
 
   return (

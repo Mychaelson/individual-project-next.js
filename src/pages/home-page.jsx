@@ -16,18 +16,22 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../config/api";
 import Navbar from "../components/navbar";
 import Page from "../components/Page";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import requiresAuth from "../config/requireAuth";
 import InfiniteScroll from "react-infinite-scroll-component";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import posts_types from "../redux/reducers/posts/types";
+import { fetchContents } from "../redux/action/fetchPosts";
 
 function HomePage() {
-  const [data, setData] = useState([]);
+  const postSelector = useSelector((state) => state.post);
+  const data = postSelector.postLists;
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [dataLength, setDataLength] = useState(0);
   const userSelector = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData();
@@ -37,6 +41,10 @@ function HomePage() {
     AOS.init({ duration: 2000 });
     AOS.refresh();
   }, []);
+
+  useEffect(() => {
+    setDataLength(postSelector.postCount);
+  }, [postSelector.postCount]);
 
   const Toast = useToast();
 
@@ -54,6 +62,7 @@ function HomePage() {
       return (
         <Box data-aos="fade-up">
           <ContentCard
+            key={val?.id?.toString()}
             username={val?.user_posts?.username}
             location={val?.location}
             likes={val?.like_count}
@@ -72,6 +81,7 @@ function HomePage() {
             userPhotoProfile={val?.user_posts?.avatar_img}
             post_comments={val?.comments}
             likeStatus={like_status}
+            idx={idx}
           />
         </Box>
       );
@@ -81,11 +91,17 @@ function HomePage() {
   // first send a request to backend to add like and then manually increase the like count for the post on local state
   const addLike = async (post_id, user_id, idx) => {
     try {
-      await axiosInstance.post(`/post/${post_id}/likes/${user_id}`);
+      const postData = await axiosInstance.post(
+        `/post/${post_id}/likes/${user_id}`
+      );
 
-      let newArr = [...data];
-      newArr[idx].like_count++;
-      setData(newArr);
+      dispatch({
+        type: posts_types.LIKE_POST,
+        payload: {
+          idx: idx,
+          post: postData.data.result,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -94,11 +110,17 @@ function HomePage() {
   // similar to like, just the opposite, which reduce the like count and delete the like on back end
   const removeLike = async (post_id, user_id, idx) => {
     try {
-      await axiosInstance.delete(`/post/${post_id}/likes/${user_id}`);
+      const postData = await axiosInstance.delete(
+        `/post/${post_id}/likes/${user_id}`
+      );
 
-      let newArr = [...data];
-      newArr[idx].like_count--;
-      setData(newArr);
+      dispatch({
+        type: posts_types.LIKE_POST,
+        payload: {
+          idx: idx,
+          post: postData.data.result,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -110,24 +132,11 @@ function HomePage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await axiosInstance.get("/post", {
-        params: {
-          _limit: maxPostPerPage,
-          _page: page,
-          _sortBy: "createdAt",
-          _sortDir: "DESC",
-        },
-      });
-
-      const allPost = res.data.result.rows;
-
-      // for infinite scroll, the data will be added to the previous data
-      setData([...data, ...allPost]);
+      dispatch(fetchContents(page));
       setIsLoading(false);
-      setDataLength(res.data.result.count);
     } catch (err) {
       setIsLoading(false);
-      console.log(err.response.data.message);
+      console.log(err?.response?.data?.message);
     }
   };
 
@@ -144,7 +153,8 @@ function HomePage() {
 
     if (confirmDelete) {
       axiosInstance.delete(`/post/${id}`).then(() => {
-        fetchData();
+        dispatch(fetchContents(1));
+        setPage(1);
       });
     }
   };

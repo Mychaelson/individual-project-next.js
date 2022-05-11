@@ -33,7 +33,8 @@ import { useFormik } from "formik";
 import axiosInstance from "../../config/api";
 import Link from "next/link";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import posts_types from "../../redux/reducers/posts/types";
 
 const ContentCard = ({
   username,
@@ -54,6 +55,7 @@ const ContentCard = ({
   commentPage,
   numberOfPageForComment,
   isDetailPost,
+  idx,
 }) => {
   const [displayCommentInput, setDisplayCommentInput] = useState(false); // toggle to wheter show the input box or hide it
   const [like_status, setLikeStatus] = useState(likeStatus);
@@ -62,6 +64,8 @@ const ContentCard = ({
   const [postCaption, setPostCaption] = useState(caption);
   // to show wheter the post has been liked by the user that logged in
   // the icon will be adjust according to the state and the fuction will also be adjusted
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setLikeStatus(likeStatus);
@@ -76,15 +80,17 @@ const ContentCard = ({
 
   // function to render all of the comments which will be called on the place that the comments want to be shown in the html
   const renderComments = () => {
+    if (comment.length > 5) {
+      setComment(comment.slice(0, 5));
+    }
     return comment.map((val) => {
       return <Comments username={val?.user?.username} content={val.comment} />;
     });
   };
 
-  const refreshPage = () => {
-    // force refresh
-    window.location.reload(false);
-  };
+  useEffect(() => {
+    setComment(post_comments);
+  }, [post_comments]);
 
   // formik for the comment input
   const { setFieldValue, handleSubmit, errors, touched } = useFormik({
@@ -99,17 +105,23 @@ const ContentCard = ({
       };
       try {
         await axiosInstance.post("/comment", newComment);
-        // if (comment.length > 5) {
-        //   // const currentComment = [...comment].pop();
 
-        // }
         const newestComment = {
           comment: values.comment,
           user: {
             username: userSelector.username,
           },
         };
-        setComment([newestComment, ...comment.slice(0, 4)]);
+
+        dispatch({
+          type: posts_types.EDIT_POST,
+          payload: {
+            idx: idx,
+            comment: values.comment,
+            username: userSelector.username,
+          },
+        });
+        // setComment([...comment.slice(0, 4)]);
       } catch (err) {
         console.log(err);
       }
@@ -164,8 +176,6 @@ const ContentCard = ({
   // this fuction is to delete post which comes from the page, passed using state and props that the fuction is send (home-page or content-detail-page)
   const deletePostButtonHandler = () => {
     deleteDataFn();
-
-    refreshPage();
   };
 
   return (

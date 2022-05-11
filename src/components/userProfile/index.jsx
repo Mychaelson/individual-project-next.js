@@ -106,8 +106,6 @@ const UserProfile = (props) => {
         });
 
         onClose();
-
-        // refreshPage();
       } catch (err) {
         console.log(err);
         Toast({

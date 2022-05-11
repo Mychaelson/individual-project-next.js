@@ -1,11 +1,14 @@
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import EnterEmailOrUsername from "../components/enterEmailOrUsername";
 import axiosInstance from "../config/api";
 
 const forgotPasswordPage = () => {
   const toast = useToast();
   const router = useRouter();
+  const userSelector = useSelector((state) => state.user);
 
   // the submitButtonHandler will send the input with is an email adress for the user to receive an email to reset password
   const submitButtonHandler = async (input) => {
@@ -34,6 +37,12 @@ const forgotPasswordPage = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (userSelector.id) {
+      router.push("/home-page");
+    }
+  }, [userSelector.id]);
 
   return (
     <div>
