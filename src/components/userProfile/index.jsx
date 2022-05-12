@@ -74,7 +74,7 @@ const UserProfile = (props) => {
         formData.append("bio", values.bio);
         values.username == userSelector.username
           ? undefined
-          : formData.append("username", username);
+          : formData.append("username", values.username);
         formData.append("avatar_image_file", selectedFile);
 
         await axiosInstance.patch(`/user/${userSelector.id}`, formData);
@@ -89,7 +89,7 @@ const UserProfile = (props) => {
           },
         });
 
-        const userLogin = res.data.profile;
+        const userLogin = res?.data?.profile;
 
         // after edited, request will be made to get the newest file and be dispatch to be shown to the user
 
@@ -287,6 +287,16 @@ const UserProfile = (props) => {
                       onClose();
                       setSelectedFile(null);
                       setImgUrlInput("");
+                      formik.setFieldValue(
+                        "bio",
+                        props.userData?.bio ? props.userData?.bio : ""
+                      );
+                      formik.setFieldValue(
+                        "full_name",
+                        props.userData?.full_name
+                          ? props.userData?.full_name
+                          : ""
+                      );
                     }}
                   >
                     Cancel
